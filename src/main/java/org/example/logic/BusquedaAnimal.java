@@ -6,29 +6,26 @@ import org.example.Entities.Informacion;
 import org.example.utilities.ingresoDatos;
 import org.example.utilities.print;
 
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.function.Consumer;
+
 
 public class BusquedaAnimal {
     private Arbol arbol;
-    private Nodo<Informacion>  nodoRaiz;
-
-    private Runnable endl = System.out::println;
-
-
-    private Runnable printArboRunnable = () -> { // Runnable para que se mas facil estar imprimuiendo el arbol
+    private final Runnable endl = System.out::println;
+    private final Runnable printArboRunnable = () -> { // Runnable para que se mas facil estar imprimuiendo el arbol
         print.println("Raiz: "+ arbol.getRaizDato().getInfo());
         endl.run();
         print.yellowLine();//-------------------------
         print.printlnColor(print.BLUE,"InOrden: ");
-        arbol.inOrden();
+        arbol.imprimirRecorrido("inOrden");
         endl.run();
         print.printlnColor(print.BLUE,"preOrden: ");
-        arbol.preOrden();
+        arbol.imprimirRecorrido("preOrden");
         endl.run();
         print.printlnColor(print.BLUE,"postOrden: ");
-        arbol.postOrden();
+        arbol.imprimirRecorrido("postOrden");
+
         endl.run();
         print.yellowLine();//-------------------------
         List<Informacion> infoAnimales = arbol.obtenerDatosEnOrden();
@@ -43,10 +40,10 @@ public class BusquedaAnimal {
     public BusquedaAnimal(){
         this.arbol = new Arbol();
         preCarga();
-        this.nodoRaiz = arbol.getRaiz();
-        //--------
+        //-------------------------------
         pruebas();
     }
+
     public void preCarga(){
         Caracteristica ave = new Caracteristica("ave");
         Caracteristica reptil = new Caracteristica("reptil");
@@ -68,49 +65,47 @@ public class BusquedaAnimal {
         Animal culebra = new Animal("Culebra");
 
         // Construcción manual del árbol siguiendo la estructura de la imagen
-        arbol.insertar(ave);              // Nivel raíz
-        arbol.insertarHijoSi(ave, aguila);
-        arbol.insertarHijoNo(ave, reptil);
+        arbol.insertar(ave);//Raiz
+        // Nivel 2
+        arbol.insertarHijo(ave, aguila, true);      // ave -> Sí -> aguila
+        arbol.insertarHijo(ave, reptil, false);     // ave -> No -> reptil
 
-        // Insertar hijos de "reptil"
-        arbol.insertarHijoSi(reptil, lagarto);
-        arbol.insertarHijoNo(reptil, mamifero);
+        // Nivel 2
+        arbol.insertarHijo(reptil, lagarto, true);  // reptil -> Sí -> lagarto
+        arbol.insertarHijo(reptil, mamifero, false);// reptil -> No -> mamifero
 
-        // Insertar hijos de "mamifero"
-        arbol.insertarHijoSi(mamifero, acuatico);
-        arbol.insertarHijoNo(mamifero, pez);
+        // Nivel 3
+        arbol.insertarHijo(mamifero, acuatico, true);   // mamifero -> Sí -> acuatico
+        arbol.insertarHijo(mamifero, pez, false);       // mamifero -> No -> pez
 
-        // Insertar hijos de "acuatico"
-        arbol.insertarHijoSi(acuatico, ballena);
-        arbol.insertarHijoNo(acuatico, maulla);
+        // Nivel 4
+        arbol.insertarHijo(acuatico, ballena, true);    // acuatico -> Sí -> ballena
+        arbol.insertarHijo(acuatico, maulla, false);    // acuatico -> No -> maulla
 
-        // Insertar hijos de "maulla"
-        arbol.insertarHijoSi(maulla, gato);
-        arbol.insertarHijoNo(maulla, perro);
+        // Nivel 5
+        arbol.insertarHijo(maulla, gato, true);         // maulla -> Sí -> gato
+        arbol.insertarHijo(maulla, perro, false);       // maulla -> No -> perro
 
-        // Insertar hijos de "pez"
-        arbol.insertarHijoSi(pez, beta);
-        arbol.insertarHijoNo(pez, invertebrado);
+        // Nivel 4 - Rama "pez"
+        arbol.insertarHijo(pez, beta, true);            // pez -> Sí -> beta
+        arbol.insertarHijo(pez, invertebrado, false);   // pez -> No -> invertebrado
 
-        // Insertar hijos de "invertebrado"
-        arbol.insertarHijoSi(invertebrado, arana);
-        arbol.insertarHijoNo(invertebrado, anfibio);
+        // Nivel 5
+        arbol.insertarHijo(invertebrado, arana, true);  // invertebrado -> Sí -> arana
+        arbol.insertarHijo(invertebrado, anfibio, false); // invertebrado -> No -> anfibio
 
-        // Insertar hijos de "anfibio"
-        arbol.insertarHijoSi(anfibio, rana);
-        arbol.insertarHijoNo(anfibio, culebra);
+        // Nivel 6
+        arbol.insertarHijo(anfibio, rana, true);        // anfibio -> Sí -> rana
+        arbol.insertarHijo(anfibio, culebra, false);    // anfibio -> No -> culebra
 
     }
     public void pruebas(){
         print.printColor(print.GREEN,"Arbol creado\n");
         printArboRunnable.run();
 
-//        printWordGreen.accept("Arbol podado\n");
-//        arbol.podar();
-//        printArboRunnable.run();
-
     }
 
+    //Pregunta-----------------------------------------------------------------------------------------------
     public void preguntar(){ //Aqui se hace la pregunta usando un arbol auxiliar para no tener que reiniciar el arbol en caso de volver a preguntar
 
         Nodo<Informacion> nodoAux = arbol.getRaiz();
@@ -119,53 +114,51 @@ public class BusquedaAnimal {
         //aqui hay que pone la parte de ingreso de caracteristica y animal
     }
 
-    private void preguntarRec(Nodo<Informacion> nodo) {
-
+    private void preguntarRec(Nodo<Informacion> nodo) {//dependiendo de si es un animal o una caracteristica se procesarad e amnera diferente
         if (nodo.getDato() instanceof Animal) {
-            print.printlnColor(print.GREEN, "El animal es: " + nodo.getDato().getInfo());
-            boolean respuesta = ingresoDatos.validBoolean(" (s/n): ");
-            if (respuesta) {
-                print.printlnColor(print.GREEN, "¡Soy un genio!");
-            } else {
-                print.printlnColor(print.GREEN, "¡Oh no! ¿Qué animal era?");
-                String nuevoAnimal = ingresoDatos.validString("Por favor, ingresa el nombre del animal: ");
-                String nuevaCaracteristica = ingresoDatos.validString("Ahora, ingresa una característica que diferencie a un(a) " + nodo.getDato().getInfo() + " de un(a) " + nuevoAnimal + ": ");
-
-                Animal animal = new Animal(nuevoAnimal);
-                Caracteristica caracteristica = new Caracteristica(nuevaCaracteristica);
-
-                // Guardar el animal actual (nodo.getDato()) en una nueva referencia
-                Animal animalAnterior = (Animal) nodo.getDato();
-
-                // Actualizar el nodo actual con la nueva característica
-                nodo.setDato(caracteristica);
-
-                // Crear nodos hijos para el nuevo animal y el animal anterior
-                nodo.setNodoSi(new Nodo<>(animal));        // "Sí" -> Nuevo animal
-                nodo.setNodoNo(new Nodo<>(animalAnterior)); // "No" -> Animal anterior
-
-                printArboRunnable.run();
-
-            }
-            return;
+            procesarAnimal((Animal) nodo.getDato(), nodo);
+        } else {
+            preguntarCaracteristica(nodo);
         }
-        print.print("Tu animal tiene la siguiente característica? " + print.YELLOW );
-        print.printColor(print.YELLOW,nodo.getDato().getInfo().toUpperCase());
-        boolean respuesta = ingresoDatos.validBoolean(" (s/n): ");
+    }
 
+    private void procesarAnimal(Animal animal, Nodo<Informacion> nodo) {//Procesa la opcion del usuario
+        print.printlnColor(print.GREEN, "El animal es: " + animal.getInfo());
+        boolean respuesta = ingresoDatos.validBoolean(" (s/n): ");
+        if (respuesta) {
+            print.printlnColor(print.GREEN, "¡Soy un genio!");
+        } else {
+            agregarNuevoAnimal(nodo);
+        }
+    }
+
+    private void agregarNuevoAnimal(Nodo<Informacion> nodo) {
+        print.printlnColor(print.GREEN, "¡Oh no! ¿Qué animal era?");
+        String nuevoAnimal = ingresoDatos.validString("Por favor, ingresa el nombre del animal: ");
+        String nuevaCaracteristica = ingresoDatos.validString("Ahora, ingresa una característica que diferencie a un(a) " + nodo.getDato().getInfo() + " de un(a) " + nuevoAnimal + ": ");
+
+        Animal animal = new Animal(nuevoAnimal);
+        Caracteristica caracteristica = new Caracteristica(nuevaCaracteristica);
+
+        // Insertar la nueva característica y el nuevo animal en el árbol (rotacion izquierda)
+        arbol.actualizarConNuevaCaracteristica(nodo, nuevoAnimal, nuevaCaracteristica);
+
+        printArboRunnable.run();
+    }
+
+    private void preguntarCaracteristica(Nodo<Informacion> nodo) {
+        print.print("¿Tu animal tiene la siguiente característica? ");
+        print.printColor(print.YELLOW, nodo.getDato().getInfo().toUpperCase());
+        boolean respuesta = ingresoDatos.validBoolean(" (s/n): ");
         preguntarRec(respuesta ? nodo.getNodoSi() : nodo.getNodoNo());
     }
 
+
+    //Iniciar el juego---------------------------------------------------------------------------------------
     public void jugar(){
-        boolean seguirJugando = true;
-
-        while(seguirJugando){
+        do {
             preguntar();
-
-            seguirJugando = ingresoDatos.validBoolean("Quieres seguir jugando? (s/n): ");
-
-        }
-
+        } while (ingresoDatos.validBoolean("¿Quieres seguir jugando? (s/n): "));
     }
 
     public void iniciar(){

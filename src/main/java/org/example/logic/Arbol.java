@@ -7,6 +7,7 @@ import org.example.utilities.print;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Arbol {
     private Nodo<Informacion> raiz;
@@ -19,232 +20,97 @@ public class Arbol {
     //Inserciones ------------------------------------------------------------------------------------------------------
     public void insertar(Informacion dato) {
         if (raiz == null) {
-            System.out.println("Instanciando la primera vez");
+            print.print("Instanciando la primera vez");
             raiz = new Nodo<>(dato);
         } else {
-            System.out.println("Insertando recursivamente");
+            print.print("Insertando recursivamente");
             if (dato instanceof Caracteristica) {
-                raiz = insertarCaracteristica(raiz, (Caracteristica) dato);
+                insertarCaracteristica(dato);
             } else if (dato instanceof Animal) {
-                raiz = insertarAnimal(raiz, (Animal) dato);
+                insertarAnimal(dato);
             }
         }
     }
 
-    // Inserta una característica en el árbol recursivamente
-    private Nodo<Informacion> insertarCaracteristica(Nodo<Informacion> actual, Caracteristica dato) {
-        if (actual == null) {
-            return new Nodo<>(dato);
-        }
+    private void insertarCaracteristica(Informacion caracteristica) {
+        raiz = insertarNodo(raiz, caracteristica, true);
+    }
 
-        // Si el nodo actual es una característica, inserta la nueva característica a la izquierda o derecha
-        if (actual.getDato() instanceof Caracteristica) {
+    private void insertarAnimal(Informacion animal) {
+        raiz = insertarNodo(raiz, animal, false);
+    }
+
+    private Nodo<Informacion> insertarNodo(Nodo<Informacion> actual, Informacion dato, boolean esCaracteristica) {
+        if (actual == null) return new Nodo<>(dato);
+        if (esCaracteristica && actual.getDato() instanceof Caracteristica) {
             if (actual.getNodoNo() == null) {
                 actual.setNodoNo(new Nodo<>(dato));
             } else {
-                actual.setNodoNo(insertarCaracteristica(actual.getNodoNo(), dato));
+                actual.setNodoNo(insertarNodo(actual.getNodoNo(), dato, true));
             }
-        } else {
-            // Si el nodo actual es un animal, no debería tener características como descendientes.
-            System.out.println("No se puede agregar una característica bajo un animal.");
-        }
-        return actual;
-    }
-
-    // Inserta un animal en el árbol recursivamente
-    private Nodo<Informacion> insertarAnimal(Nodo<Informacion> actual, Animal dato) {
-        if (actual == null) {
-            System.out.println("No se puede insertar un animal en una posición vacía sin una característica.");
-            return null;
-        }
-
-        // Si el nodo actual es una característica, intenta insertar el animal a la derecha.
-        if (actual.getDato() instanceof Caracteristica) {
+        } else if (!esCaracteristica && actual.getDato() instanceof Caracteristica) {
             if (actual.getNodoSi() == null) {
                 actual.setNodoSi(new Nodo<>(dato));
             } else if (actual.getNodoSi().getDato() instanceof Caracteristica) {
-                // Si el nodo derecho es una característica, recurre por la derecha para buscar un lugar adecuado.
-                actual.setNodoSi(insertarAnimal(actual.getNodoSi(), dato));
+                actual.setNodoSi(insertarNodo(actual.getNodoSi(), dato, false));
             } else {
-                // Si ya hay un animal en el nodo derecho, no se puede insertar otro sin otra característica.
-                System.out.println("Ya existe un animal en este camino. Se requiere una nueva característica.");
+                print.print("Ya existe un animal en este camino. Se requiere una nueva característica.");
             }
         } else {
-            System.out.println("No se puede agregar un animal bajo otro animal.");
+            print.print("No se puede agregar un elemento bajo un animal.");
         }
         return actual;
     }
 
-    //Incerta a la derecha
-    public void insertarHijoSi(Informacion padre, Informacion hijo) {
-        Nodo nodoPadre = buscarNodo(raiz, padre);
-        if (nodoPadre != null) {
-            if (nodoPadre.getNodoSi() == null) {
-                nodoPadre.setNodoSi(new Nodo(hijo));
+    // Inserción de hijos (DRY) ----------------------------------------------------------------------------------------
+    public void insertarHijo(Informacion padre, Informacion hijo, boolean esHijoSi) {
+        Optional<Nodo<Informacion>> nodoPadre = buscarNodo(raiz, padre);
+        nodoPadre.ifPresentOrElse(n -> {
+            Nodo<Informacion> nodoHijo = esHijoSi ? n.getNodoSi() : n.getNodoNo();
+            if (nodoHijo == null) {
+                if (esHijoSi) n.setNodoSi(new Nodo<>(hijo));
+                else n.setNodoNo(new Nodo<>(hijo));
             } else {
-                System.out.println("El nodo ya tiene un hijo en la rama 'Sí'.");
+                print.print("El nodo ya tiene un hijo en la rama " + (esHijoSi ? "'Sí'" : "'No'") + ".");
             }
-        } else {
-            System.out.println("No se encontró el nodo padre.");
-        }
-    }
-
-    //Incerta a la izquierda
-    public void insertarHijoNo(Informacion padre, Informacion hijo) {
-        Nodo nodoPadre = buscarNodo(raiz, padre);
-        if (nodoPadre != null) {
-            if (nodoPadre.getNodoNo() == null) {
-                nodoPadre.setNodoNo(new Nodo(hijo));
-            } else {
-                System.out.println("El nodo ya tiene un hijo en la rama 'No'.");
-            }
-        } else {
-            System.out.println("No se encontró el nodo padre.");
-        }
+        }, () -> print.print("No se encontró el nodo padre."));
     }
 
     //Utiles------------------------------------------------------------------------------------------------------------
-    private Nodo buscarNodo(Nodo actual, Informacion info) {
-        if (actual == null) {
-            return null;
-        }
-        if (actual.getDato().equals(info)) {
-            return actual;
-        }
-        Nodo encontrado = buscarNodo(actual.getNodoSi(), info);
-        if (encontrado == null) {
-            encontrado = buscarNodo(actual.getNodoNo(), info);
-        }
-        return encontrado;
+    private Optional<Nodo<Informacion>> buscarNodo(Nodo<Informacion> actual, Informacion info) {
+        if (actual == null) return Optional.empty();
+        if (actual.getDato().equals(info)) return Optional.of(actual);
+        return Optional.ofNullable(buscarNodo(actual.getNodoSi(), info).orElse(buscarNodo(actual.getNodoNo(), info).orElse(null)));
     }
 
-//    private Nodo<Informacion> rotarIzquierda(Nodo<Informacion> nodo) {
-//        Nodo<Informacion> nuevaRaiz = nodo.getNodoSi();  // El nodo derecho se convierte en la nueva raíz.
-//        nodo.setNodoSi(nuevaRaiz.getNodoNo());  // El subárbol izquierdo del nuevo nodo raíz se convierte en el derecho del nodo original.
-//        nuevaRaiz.setNodoNo(nodo);  // El nodo original se convierte en el hijo izquierdo de la nueva raíz.
-//
-//        return nuevaRaiz;  // Retorna la nueva raíz tras la rotación.
-//    }
-    public void rotarIzquierda(Nodo<Informacion> nodo) {
-        Nodo<Informacion> aux = nodo;
-        nodo.setDato(nodo.getNodoSi().getDato());
-        nodo.setNodoSi(nodo.getNodoSi().getNodoSi());
-        nodo.setNodoNo(new Nodo<>(aux.getDato()));
+    public void actualizarConNuevaCaracteristica(Nodo<Informacion> nodo, String nuevoAnimal, String nuevaCaracteristica) {
+        // Convertir el dato actual en Animal para guardarlo como "No"
+        Animal animalAnterior = (Animal) nodo.getDato();
+
+        // Crear la nueva característica y el nuevo animal
+        Caracteristica caracteristica = new Caracteristica(nuevaCaracteristica);
+        Animal animal = new Animal(nuevoAnimal);
+
+        //Rotacion a la izquierda
+        // Actualizar el nodo actual con la característica
+        nodo.setDato(caracteristica);
+        // Crear nodos hijos para el nuevo animal y el animal anterior
+        nodo.setNodoSi(new Nodo<>(animal));        // "Sí" -> Nuevo animal
+        nodo.setNodoNo(new Nodo<>(animalAnterior)); // "No" -> Animal anterior
     }
-
-
-    private Nodo<Informacion> rotarDerecha(Nodo<Informacion> nodo) {
-        Nodo<Informacion> nuevaRaiz = nodo.getNodoNo();  // El nodo izquierdo se convierte en la nueva raíz.
-        nodo.setNodoNo(nuevaRaiz.getNodoSi());  // El subárbol derecho del nuevo nodo raíz se convierte en el izquierdo del nodo original.
-        nuevaRaiz.setNodoSi(nodo);  // El nodo original se convierte en el hijo derecho de la nueva raíz.
-
-        return nuevaRaiz;  // Retorna la nueva raíz tras la rotación.
-    }
-//    private void rotarIzquierda(){
-//        Nodo<Informacion> ra = raiz;
-//        Nodo<Informacion> izq = raiz.getNodoNo();
-//        Nodo<Informacion> izq2 = raiz.getNodoNo().getNodoNo();
-//        raiz = izq;
-//        raiz.setNodoSi(ra);
-//        raiz.setNodoNo(izq2);
-//
-//    }
 
     public int nivel(Informacion dato) {
         return nivelRec(raiz, dato, 0);
     }
 
     private int nivelRec(Nodo<Informacion> nodo, Informacion dato, int nivel) {
-        if (nodo == null) {
-            return -1;
-        }
-        if (nodo.getDato().equals(dato)) {
-            return nivel;
-        }
+        if (nodo == null) return -1;
+        if (nodo.getDato().equals(dato)) return nivel;
         int izq = nivelRec(nodo.getNodoNo(), dato, nivel + 1);
-        if (izq != -1) {
-            return izq;
-        }
-        return nivelRec(nodo.getNodoSi(), dato, nivel + 1);
+        return izq != -1 ? izq : nivelRec(nodo.getNodoSi(), dato, nivel + 1);
     }
 
-    public void podar() {
-        podarRec(raiz);
-    }
-
-    private Nodo<Informacion> podarRec(Nodo<Informacion> nodo) {
-        if(nodo == null){
-            return null;
-        }
-        if(nodo.getNodoNo() == null && nodo.getNodoSi() == null){
-
-            return null;
-        }
-        nodo.setNodoNo(podarRec(nodo.getNodoNo()));
-        nodo.setNodoSi(podarRec(nodo.getNodoSi()));
-
-        return nodo;
-    }
-
-    public  Nodo<Informacion>  moverSi() {
-        print.printColor(print.RED, "Mover a la derecha");
-
-
-        return raiz.getNodoSi();
-    }
-    public  Nodo<Informacion> moverNo() {
-        print.printColor(print.RED, "Mover a la izquierda");
-        return raiz.getNodoNo();
-    }
-
-
-
-    //Impresion---------------------------------------------------------------------------------------------------------
-    public void inOrden() {
-        inOrdenRec(raiz);
-    }
-    private void inOrdenRec(Nodo<Informacion> nodo) {
-        if (nodo != null) {
-            inOrdenRec(nodo.getNodoNo());
-            print.print(nodo.getDato().getInfo() + " ");
-            inOrdenRec(nodo.getNodoSi());
-        }
-    }
-
-    public void preOrden() {
-        preOrden(raiz);
-    }
-
-    private void preOrden(Nodo<Informacion> nodo) {
-        if (nodo != null) {
-            print.print(nodo.getDato().getInfo() + " ");
-            preOrden(nodo.getNodoNo());
-            preOrden(nodo.getNodoSi());
-        }
-    }
-
-    public void postOrden() {
-        postOrden(raiz);
-    }
-
-    private void postOrden(Nodo<Informacion> nodo) {
-        if (nodo != null) {
-            postOrden(nodo.getNodoNo());
-            postOrden(nodo.getNodoSi());
-            print.print(nodo.getDato().getInfo() + " ");
-        }
-    }
-
-    //Getters-----------------------------------------------------------------------------------------------------------
-
-
-    public Informacion getRaizDato() {
-        return raiz.getDato();
-    }
-    public Nodo<Informacion> getRaiz() {
-        return raiz;
-    }
-
+    //Obtencion de datos------------------------------------------------------------------------------------------------
     public List<Informacion> obtenerDatosEnOrden() {
         List<Informacion> datos = new ArrayList<>();
         obtenerDatosEnOrdenRec(raiz, datos);
@@ -258,6 +124,36 @@ public class Arbol {
             obtenerDatosEnOrdenRec(nodo.getNodoSi(), datos);
         }
     }
+
+    //Impresion---------------------------------------------------------------------------------------------------------
+    public void imprimirRecorrido(String tipo) {
+        if (tipo.equalsIgnoreCase("inOrden")) recorrer(raiz, "inOrden");
+        else if (tipo.equalsIgnoreCase("preOrden")) recorrer(raiz, "preOrden");
+        else if (tipo.equalsIgnoreCase("postOrden")) recorrer(raiz, "postOrden");
+    }
+
+    private void recorrer(Nodo<Informacion> nodo, String tipo) {
+        if (nodo == null) return;
+        //Si es preOrden se imprime primero el nodo, luego el izquierdo y luego el derecho
+        if ("preOrden".equals(tipo)) print.print(nodo.getDato().getInfo() + " ");
+        recorrer(nodo.getNodoNo(), tipo);
+        //Si es inOrden se imprime primero el izquierdo, luego el nodo y luego el derecho
+        if ("inOrden".equals(tipo)) print.print(nodo.getDato().getInfo() + " ");
+        recorrer(nodo.getNodoSi(), tipo);
+        //Si es preOrden se imprime primero el izquierdo, luego el derecho y por ultimo el nodo
+        if ("postOrden".equals(tipo)) print.print(nodo.getDato().getInfo() + " ");
+    }
+
+
+    //Getters-----------------------------------------------------------------------------------------------------------
+    public Informacion getRaizDato() {
+        return raiz.getDato();
+    }
+    public Nodo<Informacion> getRaiz() {
+        return raiz;
+    }
+
+
 }
 
 

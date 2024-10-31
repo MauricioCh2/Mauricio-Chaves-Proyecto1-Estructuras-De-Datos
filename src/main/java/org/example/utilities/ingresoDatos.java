@@ -26,7 +26,7 @@ public class ingresoDatos {
             String input = scanner.nextLine().trim().toLowerCase();
             valid = input.equals("si") || input.equals("s")|| input.equals("1") || input.equals("true") || input.equals("yes")|| input.equals("y") || input.equals("no") || input.equals("n")|| input.equals("0") || input.equals("false") || input.equals("no")|| input.equals("n");
             if (!valid){
-                print.printlnColor(print.RED,"Por favor ingrese una respuesta valida ");
+                print.printlnColor(print.RED,"DATOS ERRONEOS: Por favor ingrese una respuesta valida ");
             }else {
                 valid = input.equals("si") || input.equals("s")|| input.equals("1") || input.equals("true") || input.equals("yes")|| input.equals("y");
                 return valid;
@@ -45,7 +45,7 @@ public class ingresoDatos {
             input = scanner.nextLine().trim();
             valid = input.matches("^[a-zA-ZñÑ\\s]*$");
             if (!valid|| input.isEmpty()) {
-                print.printlnColor(print.RED, "No se permiten caracteres especiales o números");
+                print.printlnColor(print.RED, "DATOS ERRONEOS: No se permiten caracteres especiales o números");
             }
         } while (!valid);
         return input;
