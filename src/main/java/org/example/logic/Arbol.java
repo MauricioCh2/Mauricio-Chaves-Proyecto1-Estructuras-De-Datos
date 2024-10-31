@@ -5,13 +5,13 @@ import org.example.Entities.Caracteristica;
 import org.example.Entities.Informacion;
 import org.example.utilities.print;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class Arbol {
     private Nodo<Informacion> raiz;
-
     public Arbol() {
         raiz = null;
     }
@@ -20,10 +20,10 @@ public class Arbol {
     //Inserciones ------------------------------------------------------------------------------------------------------
     public void insertar(Informacion dato) {
         if (raiz == null) {
-            print.print("Instanciando la primera vez");
+            print.println("<<<<Instanciando la primera vez>>>>");
             raiz = new Nodo<>(dato);
         } else {
-            print.print("Insertando recursivamente");
+            print.println("Insertando recursivamente");
             if (dato instanceof Caracteristica) {
                 insertarCaracteristica(dato);
             } else if (dato instanceof Animal) {
@@ -77,7 +77,7 @@ public class Arbol {
     }
 
     //Utiles------------------------------------------------------------------------------------------------------------
-    private Optional<Nodo<Informacion>> buscarNodo(Nodo<Informacion> actual, Informacion info) {
+    public Optional<Nodo<Informacion>> buscarNodo(Nodo<Informacion> actual, Informacion info) {
         if (actual == null) return Optional.empty();
         if (actual.getDato().equals(info)) return Optional.of(actual);
         return Optional.ofNullable(buscarNodo(actual.getNodoSi(), info).orElse(buscarNodo(actual.getNodoNo(), info).orElse(null)));
@@ -111,18 +111,38 @@ public class Arbol {
     }
 
     //Obtencion de datos------------------------------------------------------------------------------------------------
-    public List<Informacion> obtenerDatosEnOrden() {
+    public List<Informacion> obtenerDatosPorNivel() {
         List<Informacion> datos = new ArrayList<>();
-        obtenerDatosEnOrdenRec(raiz, datos);
+        int altura = obtenerAltura(raiz);
+
+        for (int nivel = 1; nivel <= altura; nivel++) {
+            obtenerDatosNivel(raiz, nivel, datos);
+        }
         return datos;
     }
 
-    private void obtenerDatosEnOrdenRec(Nodo<Informacion> nodo, List<Informacion> datos) {
-        if (nodo != null) {
-            datos.add(nodo.getDato());
-            obtenerDatosEnOrdenRec(nodo.getNodoNo(), datos);
-            obtenerDatosEnOrdenRec(nodo.getNodoSi(), datos);
+    private void obtenerDatosNivel(Nodo<Informacion> nodo, int nivel, List<Informacion> datos) {
+        if (nodo == null) {
+            return;
         }
+
+        if (nivel == 1) {
+            datos.add(nodo.getDato());
+        } else if (nivel > 1) {
+            obtenerDatosNivel(nodo.getNodoNo(), nivel - 1, datos);
+            obtenerDatosNivel(nodo.getNodoSi(), nivel - 1, datos);
+        }
+    }
+
+    private int obtenerAltura(Nodo<Informacion> nodo) {
+        if (nodo == null) {
+            return 0;
+        }
+
+        int alturaNo = obtenerAltura(nodo.getNodoNo());
+        int alturaSi = obtenerAltura(nodo.getNodoSi());
+
+        return Math.max(alturaNo, alturaSi) + 1;
     }
 
     //Impresion---------------------------------------------------------------------------------------------------------

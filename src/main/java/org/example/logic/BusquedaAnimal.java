@@ -3,10 +3,12 @@ package org.example.logic;
 import org.example.Entities.Animal;
 import org.example.Entities.Caracteristica;
 import org.example.Entities.Informacion;
+import org.example.utilities.ConsoleUtils;
 import org.example.utilities.ingresoDatos;
 import org.example.utilities.print;
 
 
+import java.io.Console;
 import java.util.List;
 
 
@@ -15,7 +17,6 @@ public class BusquedaAnimal {
     private final Runnable endl = System.out::println;
     private final Runnable printArboRunnable = () -> { // Runnable para que se mas facil estar imprimuiendo el arbol
         print.println("Raiz: "+ arbol.getRaizDato().getInfo());
-        endl.run();
         print.yellowLine();//-------------------------
         print.printlnColor(print.BLUE,"InOrden: ");
         arbol.imprimirRecorrido("inOrden");
@@ -25,15 +26,14 @@ public class BusquedaAnimal {
         endl.run();
         print.printlnColor(print.BLUE,"postOrden: ");
         arbol.imprimirRecorrido("postOrden");
-
         endl.run();
         print.yellowLine();//-------------------------
-        List<Informacion> infoAnimales = arbol.obtenerDatosEnOrden();
+        List<Informacion> infoAnimales = arbol.obtenerDatosPorNivel();
         infoAnimales.forEach(valor -> {
             print.print("\nNivel de " + valor.getInfo() + ": ");
             print.print(arbol.nivel(valor));
         });
-        print.println("");
+        endl.run();
         print.yellowLine();//-------------------------
     };
 
@@ -45,6 +45,7 @@ public class BusquedaAnimal {
     }
 
     public void preCarga(){
+        print.printlnColor(print.GREEN,"Cargando datos del arbol!");
         Caracteristica ave = new Caracteristica("ave");
         Caracteristica reptil = new Caracteristica("reptil");
         Caracteristica mamifero = new Caracteristica("mamifero");
@@ -135,13 +136,23 @@ public class BusquedaAnimal {
     private void agregarNuevoAnimal(Nodo<Informacion> nodo) {
         print.printlnColor(print.GREEN, "¡Oh no! ¿Qué animal era?");
         String nuevoAnimal = ingresoDatos.validString("Por favor, ingresa el nombre del animal: ");
+        // Verificar si el animal ya existe
+        if (arbol.obtenerDatosPorNivel().stream().anyMatch(info -> info.getInfo().equalsIgnoreCase(nuevoAnimal))) {
+            print.printlnColor(print.RED, "El animal ya existe en el árbol");
+            ConsoleUtils.timeOut(3);
+            return;
+        }
         String nuevaCaracteristica = ingresoDatos.validString("Ahora, ingresa una característica que diferencie a un(a) " + nodo.getDato().getInfo() + " de un(a) " + nuevoAnimal + ": ");
+        // Verificar si la característica ya existe
+        if (arbol.obtenerDatosPorNivel().stream().anyMatch(info -> info.getInfo().equalsIgnoreCase(nuevaCaracteristica))) {
+            print.printlnColor(print.RED, "La característica ya existe en el árbol");
+            ConsoleUtils.timeOut(3);
 
+            return;
+        }
 
         // Insertar la nueva característica y el nuevo animal en el árbol (rotacion izquierda)
         arbol.actualizarConNuevaCaracteristica(nodo, nuevoAnimal, nuevaCaracteristica);
-
-        printArboRunnable.run();
     }
 
     private void preguntarCaracteristica(Nodo<Informacion> nodo) {
@@ -155,7 +166,10 @@ public class BusquedaAnimal {
     //Iniciar el juego---------------------------------------------------------------------------------------
     public void jugar(){
         do {
+            ConsoleUtils.clear();
             preguntar();
+            print.printlnColor(print.GREEN,"Estado actual del arbol");
+            printArboRunnable.run();
         } while (ingresoDatos.validBoolean("¿Quieres seguir jugando? (s/n): "));
     }
 
