@@ -9,13 +9,6 @@ public class Caracteristica implements Informacion {
         this.caracteristica = texto;
     }
 
-    public String getTexto() {
-        return caracteristica;
-    }
-
-    public void setTexto(String texto) {
-        this.caracteristica = texto;
-    }
 
     @Override
     public String getInfo() {

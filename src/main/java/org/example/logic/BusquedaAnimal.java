@@ -137,8 +137,6 @@ public class BusquedaAnimal {
         String nuevoAnimal = ingresoDatos.validString("Por favor, ingresa el nombre del animal: ");
         String nuevaCaracteristica = ingresoDatos.validString("Ahora, ingresa una característica que diferencie a un(a) " + nodo.getDato().getInfo() + " de un(a) " + nuevoAnimal + ": ");
 
-        Animal animal = new Animal(nuevoAnimal);
-        Caracteristica caracteristica = new Caracteristica(nuevaCaracteristica);
 
         // Insertar la nueva característica y el nuevo animal en el árbol (rotacion izquierda)
         arbol.actualizarConNuevaCaracteristica(nodo, nuevoAnimal, nuevaCaracteristica);
