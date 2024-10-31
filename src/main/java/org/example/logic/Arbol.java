@@ -6,8 +6,6 @@ import org.example.Entities.Informacion;
 import org.example.utilities.print;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class Arbol {
@@ -18,9 +16,9 @@ public class Arbol {
 
 
     //Inserciones ------------------------------------------------------------------------------------------------------
-    public void insertar(Informacion dato) {
+    public void insertar(Informacion dato) {//Inserta el primer nodo
         if (raiz == null) {
-            print.println("<<<<Instanciando la primera vez>>>>");
+            print.printlnColor(print.PURPLE, "<<<<Instanciando la primera vez>>>>");
             raiz = new Nodo<>(dato);
         } else {
             print.println("Insertando recursivamente");
@@ -65,7 +63,7 @@ public class Arbol {
     // Inserción de hijos (DRY) ----------------------------------------------------------------------------------------
     public void insertarHijo(Informacion padre, Informacion hijo, boolean esHijoSi) {
         Optional<Nodo<Informacion>> nodoPadre = buscarNodo(raiz, padre);
-        nodoPadre.ifPresentOrElse(n -> {
+        nodoPadre.ifPresentOrElse(n -> {//Evaluaión de si el nodo padre existe
             Nodo<Informacion> nodoHijo = esHijoSi ? n.getNodoSi() : n.getNodoNo();
             if (nodoHijo == null) {
                 if (esHijoSi) n.setNodoSi(new Nodo<>(hijo));
@@ -73,16 +71,10 @@ public class Arbol {
             } else {
                 print.print("El nodo ya tiene un hijo en la rama " + (esHijoSi ? "'Sí'" : "'No'") + ".");
             }
-        }, () -> print.print("No se encontró el nodo padre."));
+        }, () -> print.print("No se encontró el nodo padre."));//Mensaje de error si no se encuentra el nodo padre
     }
 
     //Utiles------------------------------------------------------------------------------------------------------------
-    public Optional<Nodo<Informacion>> buscarNodo(Nodo<Informacion> actual, Informacion info) {
-        if (actual == null) return Optional.empty();
-        if (actual.getDato().equals(info)) return Optional.of(actual);
-        return Optional.ofNullable(buscarNodo(actual.getNodoSi(), info).orElse(buscarNodo(actual.getNodoNo(), info).orElse(null)));
-    }
-
     public void actualizarConNuevaCaracteristica(Nodo<Informacion> nodo, String nuevoAnimal, String nuevaCaracteristica) {
         // Convertir el dato actual en Animal para guardarlo como "No"
         Animal animalAnterior = (Animal) nodo.getDato();
@@ -99,6 +91,14 @@ public class Arbol {
         nodo.setNodoNo(new Nodo<>(animalAnterior)); // "No" -> Animal anterior
     }
 
+    public Optional<Nodo<Informacion>> buscarNodo(Nodo<Informacion> actual, Informacion info) {
+        if (actual == null) return Optional.empty();
+        if (actual.getDato().equals(info)) return Optional.of(actual);
+        return Optional.ofNullable(buscarNodo(actual.getNodoSi(), info).orElse(buscarNodo(actual.getNodoNo(), info).orElse(null)));
+    }
+
+
+
     public int nivel(Informacion dato) {
         return nivelRec(raiz, dato, 0);
     }
@@ -110,9 +110,38 @@ public class Arbol {
         return izq != -1 ? izq : nivelRec(nodo.getNodoSi(), dato, nivel + 1);
     }
 
+    public boolean existeDato(Informacion dato) {
+        return existeDatoRecursivo(raiz, dato);
+    }
+
+    private boolean existeDatoRecursivo(Nodo<Informacion> nodo, Informacion dato) {
+        if (nodo == null) {
+            return false;
+        }
+        if (nodo.getDato().equals(dato)) {
+            return true;
+        }
+        return existeDatoRecursivo(nodo.getNodoNo(), dato) || existeDatoRecursivo(nodo.getNodoSi(), dato);
+    }
+
     //Obtencion de datos------------------------------------------------------------------------------------------------
-    public List<Informacion> obtenerDatosPorNivel() {
-        List<Informacion> datos = new ArrayList<>();
+    public Contenedor<Informacion> obtenerDatosInOrder(){
+        Contenedor<Informacion> datos = new Contenedor<>();
+        obtenerDatosInOrderRec(raiz, datos);
+        return datos;
+    }
+
+    private void obtenerDatosInOrderRec(Nodo<Informacion> raiz, Contenedor<Informacion> datos) {
+        if (raiz == null) {
+            return;
+        }
+        obtenerDatosInOrderRec(raiz.getNodoNo(), datos);
+        datos.addLast(raiz.getDato());
+        obtenerDatosInOrderRec(raiz.getNodoSi(), datos);
+    }
+
+    public Contenedor<Informacion> obtenerDatosPorNivel() {
+        Contenedor<Informacion> datos = new Contenedor<>();
         int altura = obtenerAltura(raiz);
 
         for (int nivel = 1; nivel <= altura; nivel++) {
@@ -121,13 +150,13 @@ public class Arbol {
         return datos;
     }
 
-    private void obtenerDatosNivel(Nodo<Informacion> nodo, int nivel, List<Informacion> datos) {
+    private void obtenerDatosNivel(Nodo<Informacion> nodo, int nivel, Contenedor<Informacion> datos) {
         if (nodo == null) {
             return;
         }
 
         if (nivel == 1) {
-            datos.add(nodo.getDato());
+            datos.addFirst(nodo.getDato());
         } else if (nivel > 1) {
             obtenerDatosNivel(nodo.getNodoNo(), nivel - 1, datos);
             obtenerDatosNivel(nodo.getNodoSi(), nivel - 1, datos);

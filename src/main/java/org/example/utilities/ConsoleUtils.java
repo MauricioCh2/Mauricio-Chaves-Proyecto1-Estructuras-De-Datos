@@ -1,6 +1,5 @@
 package org.example.utilities;
 
-import java.util.Map;
 
 public class ConsoleUtils {
     public static void clear() {

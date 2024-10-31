@@ -1,4 +1,4 @@
 package org.example.logic;
 
-public class List {
+public class JSON {
 }

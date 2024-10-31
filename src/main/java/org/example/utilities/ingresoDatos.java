@@ -5,18 +5,6 @@ import java.util.Scanner;
 public class ingresoDatos {
     private static final Scanner scanner = new Scanner(System.in);
 
-//    //Metodo para ingresar Strings desde consola
-//    public static String leerString(String mensaje) {
-//        System.out.print(mensaje);
-//        return scanner.nextLine();
-//    }
-//
-//    //Metodo para recivir booleanos desde consola
-//    public static boolean leerBoolean(String mensaje) {
-//        System.out.print(mensaje);
-//        String input = scanner.nextLine().trim().toLowerCase();
-//        return input.equals("si") || input.equals("s")|| input.equals("1") || input.equals("true") || input.equals("yes")|| input.equals("y");
-//    }
 
     //Metodo para recivitr booleanos desde consola y validarlos
     public static boolean validBoolean(String mensaje) {
@@ -32,8 +20,8 @@ public class ingresoDatos {
                 return valid;
             }
 
-        }while (!valid);
-        return valid;
+        }while (true);
+
     }
 
     //Metodo para ingresar strings desde consola y validarlos (no vacios, no caracteres especiales y no numeros)
@@ -46,6 +34,27 @@ public class ingresoDatos {
             valid = input.matches("^[a-zA-ZñÑ\\s]*$");
             if (!valid|| input.isEmpty()) {
                 print.printlnColor(print.RED, "DATOS ERRONEOS: No se permiten caracteres especiales o números");
+            }
+        } while (!valid);
+        return input;
+    }
+
+    //Metodo paraingresar opciones desde consola y validarlos (no vacios, no caracteres especiales, no letras y no mas quelo solicitado)
+    public static int validOpcionNum(int max, String mensaje) {
+        int input = -1;
+        boolean valid;
+        do {
+            print.print(mensaje);
+            String userInput = scanner.nextLine().trim();
+            try {
+                input = Integer.parseInt(userInput);
+                valid = input > 0 && input <= max;
+                if (!valid) {
+                    print.printlnColor(print.RED, "DATOS ERRONEOS: Por favor ingrese una opción válida");
+                }
+            } catch (NumberFormatException e) {
+                print.printlnColor(print.RED, "DATOS ERRONEOS: Por favor ingrese un número válido");
+                valid = false;
             }
         } while (!valid);
         return input;

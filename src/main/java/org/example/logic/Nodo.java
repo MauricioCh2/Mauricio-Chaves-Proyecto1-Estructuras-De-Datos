@@ -2,6 +2,7 @@ package org.example.logic;
 
 public class Nodo<T> {
     private  T dato;
+    private int nivel;
     private Nodo<T> hijoNo;
     private Nodo<T> hijoSi;
 
@@ -33,6 +34,14 @@ public class Nodo<T> {
 
     public void setDato(T dato){
         this.dato = dato;
+    }
+
+    public int getNivel() {  // Nuevo método para obtener el nivel
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {  // Nuevo método para establecer el nivel
+        this.nivel = nivel;
     }
 
 }
