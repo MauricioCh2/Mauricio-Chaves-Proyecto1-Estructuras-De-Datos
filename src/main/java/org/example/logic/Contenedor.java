@@ -1,6 +1,7 @@
 package org.example.logic;
 
-import java.util.function.Consumer;
+import org.example.utilities.print;
+
 
 public class Contenedor<T> {
     private  NodoL<T> inicio;
@@ -34,19 +35,18 @@ public class Contenedor<T> {
         ultimo = nuevo;
     }
 
-    public void display(){
-        if(inicio == null){
-            System.out.println("No hay datos para imprimir, la lista esta vacia");
-        }else{
+    public void display() {
+        if (inicio == null) {
+            print.printlnColor(print.RED, "No hay datos para imprimir, la lista esta vacia");
+        } else {
             actual = inicio;
-            while (actual.getNodoSig()!= null) {
+            while (actual.getNodoSig() != null) {
                 System.out.print(actual.getDato() + " ");
                 actual = actual.getNodoSig();
             }
-            System.out.print(actual.getDato() + " ");
-
+            print.print(actual.getDato() + " ");
         }
-        System.out.println();
+        print.println("");
     }
 
     public void sort(){
@@ -54,7 +54,21 @@ public class Contenedor<T> {
     }
 
     public void reverse(){
-
+        if(inicio == null){
+            print.printlnColor(print.RED, "No hay datos para revertir, la lista esta vacia");
+        }else{
+            NodoL<T> temp = null;
+            actual = inicio;
+            while (actual != null){
+                temp = actual.getNodoAnt();//guarda el nodo anterior o null si es el primero
+                actual.setNodoAnt(actual.getNodoSig());//cambia el nodo anterior por el siguiente
+                actual.setNodoSig(temp);//Cambia el nodo siguiente por el anterior
+                actual = actual.getNodoAnt(); //vamos al anterior que antes era el siguiente y asi sucesivamente hasta llegar a null
+            }
+            if(temp != null){
+                inicio = temp.getNodoAnt();
+            }
+        }
     }
 
 
@@ -79,13 +93,8 @@ public class Contenedor<T> {
 
     }
 
-    public void forEach(Consumer<? super T> action) {
-        if (inicio != null) {
-            actual = inicio;
-            while (actual != null) {
-                action.accept(actual.getDato());
-                actual = actual.getNodoSig();
-            }
-        }
+
+    public boolean isEmpty() {
+        return inicio == null;
     }
 }

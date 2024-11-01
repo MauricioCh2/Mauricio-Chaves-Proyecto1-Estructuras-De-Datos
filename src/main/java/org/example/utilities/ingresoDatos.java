@@ -44,7 +44,7 @@ public class ingresoDatos {
         int input = -1;
         boolean valid;
         do {
-            print.print(mensaje);
+            print.printColor(print.YELLOW,mensaje);
             String userInput = scanner.nextLine().trim();
             try {
                 input = Integer.parseInt(userInput);

@@ -2,22 +2,10 @@ package org.example.Entities;
 
 import java.util.Objects;
 
-public class Caracteristica implements Informacion {
-    private String caracteristica;
+public class Caracteristica extends InformacionConNivel {
 
     public Caracteristica(String texto) {
-        this.caracteristica = texto;
-    }
-
-
-    @Override
-    public String getInfo() {
-        return this.caracteristica;
-    }
-
-    @Override
-    public void setInfo(String info) {
-        this.caracteristica = info;
+        super(texto); // Usa el constructor de InformacionConNivel para establecer la info
     }
 
     @Override
@@ -25,11 +13,11 @@ public class Caracteristica implements Informacion {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Caracteristica that = (Caracteristica) o;
-        return Objects.equals(caracteristica, that.caracteristica);
+        return Objects.equals(getInfo(), that.getInfo()) && getNivel() == that.getNivel();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(caracteristica);
+        return Objects.hash(getInfo(), getNivel());
     }
 }

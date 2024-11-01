@@ -40,4 +40,10 @@ public class NodoL<T> {
     public void setNodoAnt (NodoL<T> nodoAnt){
         this.nodoAnt = nodoAnt;
     }
+
+    @Override
+    public String toString() {
+        return dato.toString();
+    }
+
 }

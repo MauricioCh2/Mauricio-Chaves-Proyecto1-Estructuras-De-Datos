@@ -2,35 +2,25 @@ package org.example.Entities;
 
 import java.util.Objects;
 
-public class Animal implements Informacion {
-    private String nombre;
+public class Animal extends InformacionConNivel {
 
     public Animal(String nombre) {
-        this.nombre = nombre;
+        super(nombre);
     }
 
-
-    //Informacion--------------------------------
-    @Override
-    public String getInfo() {
-        return this.nombre;
-    }
-
-    @Override
-    public void setInfo(String info) {
-        this.nombre = info;
-    }
+    // La implementación de getInfo y setInfo ya está en InformacionConNivel
+    // Métodos adicionales pueden ser añadidos aquí si es necesario
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Objects.equals(nombre, animal.nombre);
+        return Objects.equals(getInfo(), animal.getInfo()) && getNivel() == animal.getNivel();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(nombre);
+        return Objects.hash(getInfo(), getNivel());
     }
 }

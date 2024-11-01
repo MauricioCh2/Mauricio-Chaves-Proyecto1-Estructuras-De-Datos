@@ -10,6 +10,7 @@ import org.example.utilities.print;
 
 public class BusquedaAnimal {
     private Arbol arbol;
+    private Contenedor<Informacion> lista = new Contenedor<>();
     private final Runnable endl = System.out::println;
     private final Runnable printArboRunnable = () -> { // Runnable para que se mas facil estar imprimuiendo el arbol
         print.println("Raiz: "+ arbol.getRaizDato().getInfo());
@@ -24,11 +25,9 @@ public class BusquedaAnimal {
         arbol.imprimirRecorrido("postOrden");
         endl.run();
         print.yellowLine();//-------------------------
-        Contenedor<Informacion> infoAnimales = arbol.obtenerDatosPorNivel();
-        infoAnimales.forEach(valor -> {
-            print.print("\nNivel de " + valor.getInfo() + ": ");
-            print.print(arbol.nivel(valor));
-        });
+        print.printlnColor(print.BLUE,"Por nivel: ");
+        arbol.imprimirArbolXNivel();
+
         endl.run();
         print.yellowLine();//-------------------------
     };
@@ -141,7 +140,7 @@ public class BusquedaAnimal {
             return;
         }
 
-        String nuevaCaracteristica = ingresoDatos.validString("Ahora, ingresa una característica que diferencie a un(a) " + nodo.getDato().getInfo() + " de un(a) " + nuevoAnimal + ": ");
+        String nuevaCaracteristica = ingresoDatos.validString("Ahora, ingresa una característica que diferencie a un(a) "+print.YELLOW + nodo.getDato().getInfo() + print.RESET+" de un(a) " + print.YELLOW+nuevoAnimal + print.RESET+ ": ");
         Informacion nuevaCaracteristicaInfo = new Caracteristica(nuevaCaracteristica);
 
         // Verificar si la característica ya existe
@@ -161,39 +160,64 @@ public class BusquedaAnimal {
         preguntarRec(respuesta ? nodo.getNodoSi() : nodo.getNodoNo());
     }
 
-    //Visualizacion-------------------------------------------------------------------------------------------------------------------------------------------
+    //Visualizacion con listas (parte 2)-------------------------------------------------------------------------------------------------------------------------------------------
     public void menuLista(){
-        print.printlnColor(print.GREEN, "¿Qué deseas hacer?");
-        print.printlnColor(print.YELLOW, "[1]. Añadir animales a la lista de manera acendente");
-        print.printlnColor(print.YELLOW, "[2]. Añadir animales a la lista de manera descendente");
-        print.printlnColor(print.YELLOW, "[3]. Ordenar la lista en orden de su codigo");
-        print.printlnColor(print.YELLOW, "[4]. Invertir lista");
-        print.printlnColor(print.YELLOW, "[5]. Mostrar la lista");
-        print.printlnColor(print.YELLOW, "[6]. Buscar un animal en la lista");
+        endl.run();
+        endl.run();
+        print.printlnColor(print.Orange, "¿Qué deseas hacer?");
+        print.println(print.YELLOW+ "[1]." + print.RESET + "  Añadir animales a la lista de manera acendente");
+        print.println(print.YELLOW+ "[2]." + print.RESET + "  Añadir animales a la lista de manera descendente");
+        print.println(print.YELLOW+ "[3]." + print.RESET + "  Ordenar la lista en orden de su codigo");
+        print.println(print.YELLOW+ "[4]." + print.RESET + "  Invertir lista");
+        print.println(print.YELLOW+ "[5]." + print.RESET + "  Mostrar la lista");
+        print.println(print.YELLOW+ "[6]." + print.RESET + "  Buscar un animal en la lista");
+        print.println(print.YELLOW+ "[7]." + print.RESET + "  Atras");
 
-        int opcion = ingresoDatos.validOpcionNum(6, "Ingrese una opcion: ");
+        int opcion = ingresoDatos.validOpcionNum(7, "Ingrese una opcion: ");
         ejecutarOpcionLista(opcion);
     }
+
+    private void agregarAnimalesALista(boolean agregarInicio) {
+        if (!lista.isEmpty()) {
+            print.printlnColor(print.RED, "La lista ya tiene datos, Deseas sobre escribir la lista?");
+            if (!ingresoDatos.validBoolean("¿Deseas sobre escribir la lista? (s/n): ")) {
+                return;
+            }
+        }
+
+        print.printlnColor(print.GREEN, "Agregando animales a la lista en " + (agregarInicio ? "pre Orden con addFirst()" : "post Orden con addLast()"));
+        lista = arbol.obtenerDatosInOrder(agregarInicio);
+    }
+
     public void ejecutarOpcionLista(int opcion){
         switch (opcion){
             case 1:
                 //addFirst();
+                agregarAnimalesALista(true);
                 break;
             case 2:
                 //addLast();
+                agregarAnimalesALista(false);
+
                 break;
             case 3:
                 //sort();
                 break;
             case 4:
                 //reverse();
+                lista.reverse();
                 break;
             case 5:
                 //display();
+                print.printlnColor(print.GREEN,"Lista de animales: ");
+                lista.display();
                 break;
             case 6:
                 //search();
                 break;
+            case 7:
+                break;
+
         }
     }
 
@@ -216,11 +240,13 @@ public class BusquedaAnimal {
         int opcion;
 
         print.printlnColor(print.PURPLE, "Iniciando el programa");
+
         do {
-            print.printlnColor(print.GREEN, "Bienvenido! que quieres hacer?");
-            print.printlnColor(print.YELLOW, "[1]. Jugar a adivinar el animal");
-            print.printlnColor(print.YELLOW, "[2]. Verificar animales y caracteristicas por medio de litas");
-            print.printlnColor(print.YELLOW, "[3]. Salir");
+            print.printlnColor(print.Orange,"Que quieres hacer?");
+
+            print.println( print.YELLOW+ "[1]." + print.RESET + " Jugar a adivinar el animal");
+            print.println( print.YELLOW+ "[2]." + print.RESET + " Verificar animales y caracteristicas por medio de litas");
+            print.println( print.YELLOW+ "[3]." + print.RESET + " Salir");
             opcion = ingresoDatos.validOpcionNum(3, "Ingrese una opcion: ");
             switch (opcion) {
                 case 1:
@@ -233,6 +259,8 @@ public class BusquedaAnimal {
                     print.printlnColor(print.RED, "Saliendo del programa");
                     break;
             }
+            endl.run();
+            endl.run();
         }while(opcion != 3);
 
 

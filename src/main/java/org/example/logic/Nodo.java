@@ -11,6 +11,12 @@ public class Nodo<T> {
         hijoNo = null;
         hijoSi = null;
     }
+    public Nodo(T dato, int nivel) {  // Constructor con nivel
+        this.dato = dato;
+        this.nivel = nivel;
+        hijoNo = null;
+        hijoSi = null;
+    }
 
     public T getDato() {
         return dato;
