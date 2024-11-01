@@ -189,6 +189,9 @@ public class BusquedaAnimal {
         lista = arbol.obtenerDatosInOrder(agregarInicio);
     }
 
+
+
+
     public void ejecutarOpcionLista(int opcion){
         switch (opcion){
             case 1:
@@ -202,6 +205,7 @@ public class BusquedaAnimal {
                 break;
             case 3:
                 //sort();
+                lista.sort();
                 break;
             case 4:
                 //reverse();
@@ -253,6 +257,7 @@ public class BusquedaAnimal {
                     jugar();
                     break;
                 case 2:
+
                     menuLista();
                     break;
                 case 3:

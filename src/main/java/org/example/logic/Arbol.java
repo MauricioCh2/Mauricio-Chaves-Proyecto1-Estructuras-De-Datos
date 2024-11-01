@@ -6,6 +6,7 @@ import org.example.Entities.Informacion;
 import org.example.Entities.InformacionConNivel;
 import org.example.utilities.print;
 
+import java.util.Collections;
 import java.util.Optional;//Para hacer mas legible las busquedas de nodos
 
 public class Arbol {
@@ -123,7 +124,7 @@ public class Arbol {
         if (nodo == null) {
             return false;
         }
-        if (nodo.getDato().equals(dato)) {
+        if (nodo.getDato().getInfo().toLowerCase().equals(dato.getInfo().toLowerCase())) {
             return true;
         }
         return existeDatoRecursivo(nodo.getNodoNo(), dato) || existeDatoRecursivo(nodo.getNodoSi(), dato);
@@ -148,6 +149,8 @@ public class Arbol {
         // Agrega el dato y el nivel actual del nodo
         datos.addFirst(new InformacionConNivel(raiz.getDato().getInfo(), raiz.getNivel()) {
         }); // suponiendo que InformacionConNivel es una clase que contiene el dato y el nivel
+
+
         obtenerDatosPreOrderRec(raiz.getNodoNo(), datos);
         obtenerDatosPreOrderRec(raiz.getNodoSi(), datos);
     }
@@ -161,6 +164,9 @@ public class Arbol {
         datos.addLast(new InformacionConNivel(raiz.getDato().getInfo(), raiz.getNivel()) {
         }); // suponiendo que InformacionConNivel es una clase que contiene el dato y el nivel
     }
+
+
+
 
     private int obtenerAltura(Nodo<Informacion> nodo) {
         if (nodo == null) {
@@ -203,7 +209,7 @@ public class Arbol {
         if (nodo == null) return;
 
         if (nivel == 1) {
-            print.print(nodo.getDato().getInfo() + " (Nivel: " + nodo.getNivel() + ") \n");
+            print.print("\t"+ (nodo.getDato() instanceof Animal?"Animal: ": "Rasgo1: ")+ nodo.getDato().getInfo() + ", Nivel: " + nodo.getNivel() + "\n");
         } else if (nivel > 1) {
             obtenerDatosNivel(nodo.getNodoNo(), nivel - 1);
             obtenerDatosNivel(nodo.getNodoSi(), nivel - 1);
