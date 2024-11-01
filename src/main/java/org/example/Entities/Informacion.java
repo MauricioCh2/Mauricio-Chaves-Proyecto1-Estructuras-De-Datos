@@ -1,9 +1,6 @@
 package org.example.Entities;
 
-public interface Informacion {
+public interface Informacion extends Comparable<Informacion> {//El comparable sirve para poder comparar de manera generica a la hora de sortear
     String getInfo();
-    void  setInfo(String info);
-
-
-    int compareTo(InformacionConNivel info);
+    int getNivel();
 }

@@ -187,8 +187,28 @@ public class BusquedaAnimal {
 
         print.printlnColor(print.GREEN, "Agregando animales a la lista en " + (agregarInicio ? "pre Orden con addFirst()" : "post Orden con addLast()"));
         lista = arbol.obtenerDatosInOrder(agregarInicio);
+        imprimirLista();
+
     }
 
+    private void imprimirLista() {
+        print.printlnColor(print.GREEN, "Lista de animales: ");
+        lista.display();
+    }
+
+    private void search() {
+        if (lista.isEmpty()) {
+            print.printlnColor(print.RED, "La lista está vacía");
+            return;
+        }
+
+        String animal = ingresoDatos.validString("Ingrese el nombre del animal a buscar: ");
+        if (lista.search(animal)!=null) {
+            print.printlnColor(print.GREEN, "El animal " + animal + " está en la lista");
+        } else {
+            print.printlnColor(print.RED, "El animal " + animal + " no está en la lista");
+        }
+    }
 
 
 
@@ -206,18 +226,20 @@ public class BusquedaAnimal {
             case 3:
                 //sort();
                 lista.sort();
+                imprimirLista();
                 break;
             case 4:
                 //reverse();
                 lista.reverse();
+                imprimirLista();
                 break;
             case 5:
                 //display();
-                print.printlnColor(print.GREEN,"Lista de animales: ");
-                lista.display();
+                imprimirLista();
                 break;
             case 6:
                 //search();
+                search();
                 break;
             case 7:
                 break;

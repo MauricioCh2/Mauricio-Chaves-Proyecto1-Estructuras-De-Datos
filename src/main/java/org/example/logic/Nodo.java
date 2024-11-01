@@ -6,11 +6,7 @@ public class Nodo<T> {
     private Nodo<T> hijoNo;
     private Nodo<T> hijoSi;
 
-    public Nodo(T dato) {
-        this.dato = dato;
-        hijoNo = null;
-        hijoSi = null;
-    }
+
     public Nodo(T dato, int nivel) {  // Constructor con nivel
         this.dato = dato;
         this.nivel = nivel;
@@ -46,9 +42,6 @@ public class Nodo<T> {
         return nivel;
     }
 
-    public void setNivel(int nivel) {  // Nuevo método para establecer el nivel
-        this.nivel = nivel;
-    }
 
 }
 

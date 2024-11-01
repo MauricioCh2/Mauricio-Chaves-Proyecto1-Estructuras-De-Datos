@@ -6,7 +6,7 @@ import org.example.Entities.Informacion;
 import org.example.Entities.InformacionConNivel;
 import org.example.utilities.print;
 
-import java.util.Collections;
+
 import java.util.Optional;//Para hacer mas legible las busquedas de nodos
 
 public class Arbol {
@@ -21,48 +21,10 @@ public class Arbol {
         if (raiz == null) {
             print.printlnColor(print.PURPLE, "<<<<Instanciando la primera vez>>>>");
             raiz = new Nodo<>(dato, 0); // Nivel 0 para el primer nodo
-        } else {
-            print.println("Insertando recursivamente");
-            if (dato instanceof Caracteristica) {
-                insertarCaracteristica(dato, 1); // Inicia con nivel 1 para el siguiente nivel
-            } else if (dato instanceof Animal) {
-                insertarAnimal(dato, 1);
-            }
         }
     }
 
-    private void insertarCaracteristica(Informacion caracteristica, int nivel) {
-        raiz = insertarNodo(raiz, caracteristica, true, nivel);
-    }
-
-    private void insertarAnimal(Informacion animal, int nivel) {
-        raiz = insertarNodo(raiz, animal, false, nivel);
-    }
-
-    private Nodo<Informacion> insertarNodo(Nodo<Informacion> actual, Informacion dato, boolean esCaracteristica, int nivel) {
-        if (actual == null) return new Nodo<>(dato, nivel); // Asigna el nivel actual
-        if (esCaracteristica && actual.getDato() instanceof Caracteristica) {
-            if (actual.getNodoNo() == null) {
-                actual.setNodoNo(new Nodo<>(dato, nivel)); // Asigna nivel
-            } else {
-                actual.setNodoNo(insertarNodo(actual.getNodoNo(), dato, true, nivel + 1)); // Aumenta nivel recursivamente
-            }
-        } else if (!esCaracteristica && actual.getDato() instanceof Caracteristica) {
-            if (actual.getNodoSi() == null) {
-                actual.setNodoSi(new Nodo<>(dato, nivel)); // Asigna nivel
-            } else if (actual.getNodoSi().getDato() instanceof Caracteristica) {
-                actual.setNodoSi(insertarNodo(actual.getNodoSi(), dato, false, nivel + 1)); // Aumenta nivel recursivamente
-            } else {
-                print.print("Ya existe un animal en este camino. Se requiere una nueva característica.");
-            }
-        } else {
-            print.print("No se puede agregar un elemento bajo un animal.");
-        }
-        return actual;
-    }
-
-
-    // Inserción de hijos (DRY) ----------------------------------------------------------------------------------------
+    // Inserción de hijos ----------------------------------------------------------------------------------------
     public void insertarHijo(Informacion padre, Informacion hijo, boolean esHijoSi) {
         Optional<Nodo<Informacion>> nodoPadre = buscarNodo(raiz, padre);
         nodoPadre.ifPresentOrElse(n -> { // Evaluación de si el nodo padre existe
@@ -130,44 +92,8 @@ public class Arbol {
         return existeDatoRecursivo(nodo.getNodoNo(), dato) || existeDatoRecursivo(nodo.getNodoSi(), dato);
     }
 
-    //Obtencion de datos------------------------------------------------------------------------------------------------
-    public Contenedor<Informacion> obtenerDatosInOrder(boolean agregarInicio){
-        Contenedor<Informacion> datos = new Contenedor<>();
-        if (agregarInicio) {
-            obtenerDatosPreOrderRec(raiz, datos);
-        } else {
-            obtenerDatosPostOrderRec(raiz, datos);
-        }
 
-        return datos;
-    }
-
-    private void obtenerDatosPreOrderRec(Nodo<Informacion> raiz, Contenedor<Informacion> datos) {
-        if (raiz == null) {
-            return;
-        }
-        // Agrega el dato y el nivel actual del nodo
-        datos.addFirst(new InformacionConNivel(raiz.getDato().getInfo(), raiz.getNivel()) {
-        }); // suponiendo que InformacionConNivel es una clase que contiene el dato y el nivel
-
-
-        obtenerDatosPreOrderRec(raiz.getNodoNo(), datos);
-        obtenerDatosPreOrderRec(raiz.getNodoSi(), datos);
-    }
-    private void obtenerDatosPostOrderRec(Nodo<Informacion> raiz, Contenedor<Informacion> datos) {
-        if (raiz == null) {
-            return;
-        }
-        obtenerDatosPostOrderRec(raiz.getNodoNo(), datos);
-        obtenerDatosPostOrderRec(raiz.getNodoSi(), datos);
-        // Agrega el dato y el nivel actual del nodo
-        datos.addLast(new InformacionConNivel(raiz.getDato().getInfo(), raiz.getNivel()) {
-        }); // suponiendo que InformacionConNivel es una clase que contiene el dato y el nivel
-    }
-
-
-
-
+    //Altura------------------------------------------------------------------------------------------------------------
     private int obtenerAltura(Nodo<Informacion> nodo) {
         if (nodo == null) {
             return 0;
@@ -180,12 +106,12 @@ public class Arbol {
     }
 
     //Impresion---------------------------------------------------------------------------------------------------------
+    //Recorridos convencionales
     public void imprimirRecorrido(String tipo) {
         if (tipo.equalsIgnoreCase("inOrden")) recorrer(raiz, "inOrden");
         else if (tipo.equalsIgnoreCase("preOrden")) recorrer(raiz, "preOrden");
         else if (tipo.equalsIgnoreCase("postOrden")) recorrer(raiz, "postOrden");
     }
-
     private void recorrer(Nodo<Informacion> nodo, String tipo) {
         if (nodo == null) return;
         //Si es preOrden se imprime primero el nodo, luego el izquierdo y luego el derecho
@@ -198,13 +124,13 @@ public class Arbol {
         if ("postOrden".equals(tipo)) print.print(nodo.getDato().getInfo() + " ");
     }
 
+    //Impresion por nivel
     public void imprimirArbolXNivel() {
         int altura = obtenerAltura(raiz);
         for (int nivel = 1; nivel <= altura; nivel++) {
             obtenerDatosNivel(raiz, nivel);
         }
     }
-
     private void obtenerDatosNivel(Nodo<Informacion> nodo, int nivel) {
         if (nodo == null) return;
 
@@ -216,6 +142,49 @@ public class Arbol {
         }
     }
 
+    //Obtencion de datos------------------------------------------------------------------------------------------------
+    //Estos metodos son usados especificamente para la parte 2
+    public Contenedor<Informacion> obtenerDatosInOrder(boolean agregarInicio) {
+        Contenedor<Informacion> datos = new Contenedor<>();
+        obtenerDatosRec(raiz, datos, agregarInicio);
+        return datos;
+    }
+
+    private void obtenerDatosRec(Nodo<Informacion> nodo, Contenedor<Informacion> datos, boolean agregarInicio) {
+        if (nodo == null) {
+            return;
+        }
+        if (agregarInicio) {//Pre-Orden
+            agregarDato(nodo, datos, true);
+        }
+        obtenerDatosRec(nodo.getNodoNo(), datos, agregarInicio);
+        obtenerDatosRec(nodo.getNodoSi(), datos, agregarInicio);
+        if (!agregarInicio) {//Post-Orden
+            agregarDato(nodo, datos, false);
+        }
+    }
+
+    private void agregarDato(Nodo<Informacion> nodo, Contenedor<Informacion> datos, boolean agregarInicio) {
+        Informacion dato = nodo.getDato();
+        if (dato instanceof Animal) {
+            Animal animal = new Animal(dato.getInfo(), nodo.getNivel());
+            if (agregarInicio) {
+                datos.addFirst(animal);
+            } else {
+                datos.addLast(animal);
+            }
+        } else if (dato instanceof Caracteristica) {
+            Caracteristica caracteristica = new Caracteristica(dato.getInfo(), nodo.getNivel());
+            if (agregarInicio) {
+                datos.addFirst(caracteristica);
+            } else {
+                datos.addLast(caracteristica);
+            }
+        }
+    }
+
+
+
     //Getters-----------------------------------------------------------------------------------------------------------
     public Informacion getRaizDato() {
         return raiz.getDato();
@@ -223,6 +192,8 @@ public class Arbol {
     public Nodo<Informacion> getRaiz() {
         return raiz;
     }
+
+
 
 
 }

@@ -20,27 +20,19 @@ public abstract class InformacionConNivel implements Informacion {
         return info;
     }
 
-    @Override
-    public void setInfo(String info) {
-        this.info = info;
-    }
 
     public int getNivel() {
         return nivel;
     }
-
-    public void setNivel(int nivel) {
+    public  void setNivel(int nivel){
         this.nivel = nivel;
     }
+
+
 
     @Override
     public String toString() {
         return "\tInfo: " + info + ", Nivel: " + nivel + "\n";
-    }
-
-    @Override
-    public int compareTo(InformacionConNivel info) {
-        return Integer.compare(getNivel(), info.getNivel());
     }
 
     @Override
@@ -53,5 +45,10 @@ public abstract class InformacionConNivel implements Informacion {
     @Override
     public int hashCode() {
         return Objects.hash(info, nivel);
+    }
+
+    @Override
+    public int compareTo(Informacion other) {
+        return Integer.compare(this.getNivel(), other.getNivel());
     }
 }

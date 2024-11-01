@@ -5,11 +5,7 @@ public class NodoL<T> {
     private  NodoL<T> nodoSig ;
     private  NodoL<T> nodoAnt ;
 
-    public NodoL(){
-        dato = null;
-        nodoSig = null;
-        nodoAnt = null;
-    }
+
     public NodoL(T dato, NodoL<T> nodoAnt, NodoL<T> nodoSig){
         this.dato = dato;
         this.nodoAnt = nodoAnt;

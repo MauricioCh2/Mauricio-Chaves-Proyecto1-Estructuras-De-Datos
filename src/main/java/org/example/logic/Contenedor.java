@@ -3,17 +3,19 @@ package org.example.logic;
 
 import org.example.Entities.Animal;
 import org.example.Entities.Informacion;
+
+import org.example.Entities.InformacionConNivel;
 import org.example.utilities.print;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class Contenedor<T> {
+public class Contenedor<T extends Comparable<? super T>>{
     private  NodoL<T> inicio;
     private NodoL<T> actual;
     private NodoL<T> ultimo;
-    private Map<String,Contenedor<String>> map;
+    private final Map<String,Contenedor<String>> map;
 
     public Contenedor(){
         this.inicio = null;
@@ -38,7 +40,7 @@ public class Contenedor<T> {
 
     }
     public void addLast(T dato) {
-        NodoL<T> nuevo = new NodoL<T>(dato, ultimo, null);
+        NodoL<T> nuevo = new NodoL<>(dato, ultimo, null);
         if (inicio == null) {
             inicio = nuevo;
         } else {
@@ -84,8 +86,10 @@ public class Contenedor<T> {
         NodoL<T> i = inicio.getNodoAnt();
         NodoL<T> j = inicio;
         T pivote = ultimo.getDato();
+
         while (j != ultimo) {
-            if (((Comparable<T>) j.getDato()).compareTo(pivote) <= 0) {
+            // Usando el método compareTo genérico
+            if (j.getDato().compareTo(pivote) <= 0) {//si el dato es menor o igual al pivote se intercambian (el compare ayuda a que sea generico)
                 i = (i == null) ? inicio : i.getNodoSig();
                 T temp = i.getDato();
                 i.setDato(j.getDato());
@@ -93,12 +97,16 @@ public class Contenedor<T> {
             }
             j = j.getNodoSig();
         }
+
         i = (i == null) ? inicio : i.getNodoSig();
         T temp = i.getDato();
         i.setDato(ultimo.getDato());
         ultimo.setDato(temp);
+
         return i;
     }
+
+
 
 
     public void reverse(){
@@ -120,11 +128,13 @@ public class Contenedor<T> {
     }
 
 
-    private void actualizarMapa(T dato) {
+    private void actualizarMapa(T dato) { //En caso que el conenedor posea animales los mapeara
+
         if (dato instanceof Animal) {
             Informacion info = (Animal) dato;
             Contenedor<String> contenedorCaracteristicas = new Contenedor<>();
-            // Aquí se debe agregar la lógica para llenar el contenedor con las características
+            // LOGICA DE LLENADO DE CONTENEDOR DE CARACTERISTICAS
+
             map.put(info.getInfo(), contenedorCaracteristicas);
         }
     }

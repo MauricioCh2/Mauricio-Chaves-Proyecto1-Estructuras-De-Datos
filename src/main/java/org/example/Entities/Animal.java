@@ -2,11 +2,15 @@ package org.example.Entities;
 
 import java.util.Objects;
 
-public class Animal extends InformacionConNivel {
+public class Animal extends InformacionConNivel  {
 
     public Animal(String nombre) {
         super(nombre);
     }
+    public Animal(String nombre, int nivel) {
+        super(nombre, nivel);
+    }
+
 
     // La implementación de getInfo y setInfo ya está en InformacionConNivel
     // Métodos adicionales pueden ser añadidos aquí si es necesario
@@ -23,4 +27,7 @@ public class Animal extends InformacionConNivel {
     public int hashCode() {
         return Objects.hash(getInfo(), getNivel());
     }
+
+
+
 }
