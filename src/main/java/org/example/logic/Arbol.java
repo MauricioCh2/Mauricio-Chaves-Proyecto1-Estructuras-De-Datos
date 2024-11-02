@@ -199,7 +199,7 @@ public class Arbol {
     }
 
 
-    public void setRaiz(Nodo raiz) {
+    public void setRaiz(Nodo<Informacion> raiz) {
         this.raiz = raiz;
     }
 }

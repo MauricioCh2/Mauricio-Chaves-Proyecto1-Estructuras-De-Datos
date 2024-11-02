@@ -3,7 +3,6 @@ package org.example.logic;
 
 import org.example.utilities.print;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -11,14 +10,12 @@ public class Contenedor<T extends Comparable<? super T>>{
     private  NodoL<T> dummy;
     private NodoL<T> actual;
     private NodoL<T> ultimo;
-    private final Map<String,Contenedor<String>> map;
 
     public Contenedor(){
         this.dummy = null;
         this.actual = null;
         this.ultimo = null;
 
-        map = new HashMap<>();
     }
     public Contenedor(Contenedor<T> otro) {
         this(); // Inicializar el contenedor vacío
