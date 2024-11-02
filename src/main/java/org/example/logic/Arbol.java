@@ -6,6 +6,7 @@ import org.example.Entities.Informacion;
 import org.example.utilities.print;
 
 
+import java.util.Map;
 import java.util.Optional;//Para hacer mas legible las búsquedas de nodos
 
 public class Arbol {
@@ -130,22 +131,42 @@ public class Arbol {
 
     //Obtencion de datos------------------------------------------------------------------------------------------------
     //Estos metodos son usados especificamente para la parte 2
-    public Contenedor<Informacion> obtenerDatosInOrder(boolean agregarInicio) {
+    public Contenedor<Informacion> obtenerDatosYMapear(boolean agregarInicio, Map<String, Contenedor<String>> map) {
         Contenedor<Informacion> datos = new Contenedor<>();
-        obtenerDatosRec(raiz, datos, agregarInicio);
+        Contenedor<String> contenedorActual = new Contenedor<>();
+        obtenerDatosYMapearRec(raiz, datos, agregarInicio, contenedorActual, map);
         return datos;
     }
 
-    private void obtenerDatosRec(Nodo<Informacion> nodo, Contenedor<Informacion> datos, boolean agregarInicio) {
-        if (nodo == null) {
+    private void obtenerDatosYMapearRec(Nodo<Informacion> nodo, Contenedor<Informacion> datos,
+                                        boolean agregarInicio, Contenedor<String> contenedorActual,
+                                        Map<String, Contenedor<String>> map) {
+        if (nodo == null) {//Si el nodo es nulo se retorna, es el caso base
             return;
         }
-        if (agregarInicio) {//Pre-Orden
+
+        // Agregar dato al contenedor si es preorden
+        if (agregarInicio) {
             agregarDato(nodo, datos, true);
         }
-        obtenerDatosRec(nodo.getNodoNo(), datos, agregarInicio);
-        obtenerDatosRec(nodo.getNodoSi(), datos, agregarInicio);
-        if (!agregarInicio) {//Post-Orden
+
+        // Manejar el mapeo de características
+        if (nodo.getDato() instanceof Caracteristica) {
+            Contenedor<String> contenedorSi = new Contenedor<>(contenedorActual);
+            contenedorSi.addLast(nodo.getDato().getInfo().toLowerCase());
+
+            // Recursión
+            obtenerDatosYMapearRec(nodo.getNodoNo(), datos, agregarInicio, contenedorActual, map);
+            obtenerDatosYMapearRec(nodo.getNodoSi(), datos, agregarInicio, contenedorSi, map);
+        } else if (nodo.getDato() instanceof Animal) {//Los animales son hojas asi que parara en el siguiente la recursión
+            // Guardar características del animal
+            Animal animal = (Animal) nodo.getDato();
+            map.put(animal.getInfo().toLowerCase(), new Contenedor<>(contenedorActual));
+
+        }
+
+        // Agregar dato al contenedor si es postorden
+        if (!agregarInicio) {
             agregarDato(nodo, datos, false);
         }
     }
@@ -168,8 +189,6 @@ public class Arbol {
             }
         }
     }
-
-
 
     //Getters-----------------------------------------------------------------------------------------------------------
     public Informacion getRaizDato() {

@@ -1,9 +1,6 @@
 package org.example.logic;
 
 
-import org.example.Entities.Animal;
-import org.example.Entities.Informacion;
-
 import org.example.utilities.print;
 
 import java.util.HashMap;
@@ -11,67 +8,57 @@ import java.util.Map;
 
 
 public class Contenedor<T extends Comparable<? super T>>{
-    private  NodoL<T> inicio;
+    private  NodoL<T> dummy;
     private NodoL<T> actual;
     private NodoL<T> ultimo;
     private final Map<String,Contenedor<String>> map;
 
     public Contenedor(){
-        this.inicio = null;
+        this.dummy = null;
         this.actual = null;
         this.ultimo = null;
 
         map = new HashMap<>();
     }
+    public Contenedor(Contenedor<T> otro) {
+        this(); // Inicializar el contenedor vacío
+        NodoL<T> actual = otro.dummy;
+        while (actual != null) {
+            this.addLast(actual.getDato()); // Copiar cada dato al nuevo contenedor
+            actual = actual.getNodoSig();
+        }
+    }
 
     public void addFirst(T dato){
-        NodoL<T> nuevo = new NodoL<>(dato, null, inicio);
-        if (inicio != null) {
-            inicio.setNodoAnt(nuevo);
+        NodoL<T> nuevo = new NodoL<>(dato, null, dummy);
+        if (dummy != null) {
+            dummy.setNodoAnt(nuevo);
         } else {
             ultimo = nuevo; // Si la lista estaba vacía, el último será el nuevo nodo
         }
-        inicio = nuevo;
+        dummy = nuevo;
 
-        // Agrega al mapa el animal y sus características
-        actualizarMapa(dato);
 
 
     }
+
     public void addLast(T dato) {
         NodoL<T> nuevo = new NodoL<>(dato, ultimo, null);
-        if (inicio == null) {
-            inicio = nuevo;
+        if (dummy == null) {
+            dummy = nuevo;
         } else {
             ultimo.setNodoSig(nuevo);
         }
         ultimo = nuevo;
 
-        // Agrega al mapa el animal y sus características
-        actualizarMapa(dato);
-
-    }
-
-    public void display() {
-        if (inicio == null) {
-            return;
-        } else {
-            actual = inicio;
-            while (actual.getNodoSig() != null) {
-                System.out.print(actual.getDato() + " ");
-                actual = actual.getNodoSig();
-            }
-            print.print(actual.getDato() + " ");
-        }
-        print.println("");
     }
 
     public void sort(){
-        if(inicio == null) {
+        if(dummy == null) {
             print.printlnColor(print.RED, "No hay datos para ordenar, la lista esta vacía");
         }
         else {
-            quickSort(inicio, ultimo);
+            quickSort(dummy, ultimo);
         }
     }
     private void quickSort(NodoL<T> inicio, NodoL<T> ultimo){
@@ -105,15 +92,12 @@ public class Contenedor<T extends Comparable<? super T>>{
         return i;
     }
 
-
-
-
     public void reverse(){
-        if(inicio == null){
+        if(dummy == null){
             print.printlnColor(print.RED, "No hay datos para revertir, la lista esta vacía");
         }else{
             NodoL<T> temp = null;
-            actual = inicio;
+            actual = dummy;
             while (actual != null){
                 temp = actual.getNodoAnt();//guarda el nodo anterior o null si es el primero
                 actual.setNodoAnt(actual.getNodoSig());//cambia el nodo anterior por el siguiente
@@ -121,29 +105,53 @@ public class Contenedor<T extends Comparable<? super T>>{
                 actual = actual.getNodoAnt(); //vamos al anterior que antes era el siguiente y asi sucesivamente hasta llegar a null
             }
             if(temp != null){
-                inicio = temp.getNodoAnt();
+                dummy = temp.getNodoAnt();
             }
         }
     }
 
 
-    private void actualizarMapa(T dato) { //En caso de que el contenedor posea animales los mapeara
-
-        if (dato instanceof Animal) {
-            Informacion info = (Animal) dato;
-            Contenedor<String> contenedorCaracteristicas = new Contenedor<>();
-            // LÓGICA DE LLENADO DE CONTENEDOR DE CARACTERISTICAS
-
-            map.put(info.getInfo(), contenedorCaracteristicas);
+    public void display() {
+        if (dummy == null) {
+            return;
+        } else {
+            actual = dummy;
+            while (actual.getNodoSig() != null) {
+               print.print(actual.getDato() + " ");
+                actual = actual.getNodoSig();
+            }
+            print.print(actual.getDato() + " ");
         }
+        print.println("");
     }
 
-    public Contenedor<String> search(String animal) {
-        return map.getOrDefault(animal, null);
+
+
+    public void features(String animal, Map<String, Contenedor<String>> map) {
+        String animalL = animal.toLowerCase();
+
+        if (!map.containsKey(animalL)) {
+            print.println("No existe");
+            return;
+        }
+
+        // Obtener las características del animal
+        Contenedor<String> caracteristicas = map.get(animalL);
+        print.print("'" + animalL + "'" + "-->[");
+        for (NodoL<String> nodo = caracteristicas.getFirst(); nodo != null; nodo = nodo.getNodoSig()) {
+            print.print("'" + nodo.getDato()+"'" + (nodo.getNodoSig() != null ? ", " : ""));
+        }
+        print.println("]");
+
+
     }
 
 
     public boolean isEmpty() {
-        return inicio == null;
+        return dummy == null;
+    }
+
+    public NodoL<T> getFirst() {
+        return dummy;
     }
 }

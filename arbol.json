@@ -76,9 +76,19 @@
                     "nodoNo": {
                         "tipo": "Caracteristica",
                         "nodoSi": {
-                            "tipo": "Animal",
-                            "dato": "Rana",
-                            "nivel": 6
+                            "tipo": "Caracteristica",
+                            "nodoSi": {
+                                "tipo": "Animal",
+                                "dato": "Salamandra",
+                                "nivel": 7
+                            },
+                            "dato": "Tiene cola",
+                            "nivel": 6,
+                            "nodoNo": {
+                                "tipo": "Animal",
+                                "dato": "Rana",
+                                "nivel": 7
+                            }
                         },
                         "dato": "anfibio",
                         "nivel": 5,

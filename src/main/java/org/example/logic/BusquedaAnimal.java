@@ -7,10 +7,15 @@ import org.example.utilities.ConsoleUtils;
 import org.example.utilities.ingresoDatos;
 import org.example.utilities.print;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class BusquedaAnimal {
     private Arbol arbol;
     private Contenedor<Informacion> lista = new Contenedor<>();
+    private final Map<String,Contenedor<String>> map;
+
     //Runnable para imprimir el árbol
     private final Runnable endl = System.out::println;
     private final Runnable printArboRunnable = () -> { // Runnable para que sea más fácil estar imprimiendo el árbol
@@ -33,12 +38,15 @@ public class BusquedaAnimal {
         print.yellowLine();//-------------------------
     };
 
+
+
     //Constructor----------------------------------------------------------------------------------------------------------------------------------------------
     public BusquedaAnimal(){
         this.arbol = new Arbol();
         preCarga();
         //-------------------------------
         pruebas();
+        this.map = new HashMap<>();
     }
 
     public void preCarga(){ //Próximamente con json
@@ -195,7 +203,8 @@ public class BusquedaAnimal {
             }
         }
 
-        lista = arbol.obtenerDatosInOrder(agregarInicio);
+        lista = arbol.obtenerDatosYMapear(agregarInicio, map);
+        //arbol.mapearCaracteristicas(map);
         imprimirLista();
         print.printlnColor(print.GREEN, "Agregando animales a la lista en " + (agregarInicio ? "pre Orden con addFirst()" : "post Orden con addLast()"));
 
@@ -220,6 +229,22 @@ public class BusquedaAnimal {
         lista.display();
     }
 
+
+    // Método que realiza el mapeo de características desde la lista al mapa
+//    private void mapearCaracteristicas() {
+//        Contenedor<String> caracteristicas = new Contenedor<>();
+//
+//        for (NodoL<Informacion> nodo = lista.getFirst(); nodo != null; nodo = nodo.getNodoSig()) {
+//            if (nodo.getDato() instanceof Caracteristica) {
+//               arbol.mapearCaracteristicas(nodo.getDato().getInfo(), caracteristicas, map);
+//            } else if (nodo.getDato() instanceof Animal) {
+//                String nombreAnimal = nodo.getDato().getInfo();
+//                map.put(nombreAnimal, new Contenedor<>(caracteristicas));
+//            }
+//        }
+//    }
+
+
     private void search() {
         if (lista.isEmpty()) {
             print.printlnColor(print.RED, "La lista está vacía");
@@ -227,11 +252,8 @@ public class BusquedaAnimal {
         }
 
         String animal = ingresoDatos.validString("Ingrese el nombre del animal a buscar: ");
-        if (lista.search(animal)!=null) {
-            print.printlnColor(print.GREEN, "El animal " + animal + " está en la lista");
-        } else {
-            print.printlnColor(print.RED, "El animal " + animal + " no está en la lista");
-        }
+        lista.features(animal, map);
+
     }
 
 
@@ -268,7 +290,7 @@ public class BusquedaAnimal {
                 imprimirLista();
                 break;
             case 6:
-                //search();
+                //features();
                 search();
                 break;
             case 7:
