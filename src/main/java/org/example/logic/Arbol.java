@@ -3,11 +3,10 @@ package org.example.logic;
 import org.example.Entities.Animal;
 import org.example.Entities.Caracteristica;
 import org.example.Entities.Informacion;
-import org.example.Entities.InformacionConNivel;
 import org.example.utilities.print;
 
 
-import java.util.Optional;//Para hacer mas legible las busquedas de nodos
+import java.util.Optional;//Para hacer mas legible las búsquedas de nodos
 
 public class Arbol {
     private Nodo<Informacion> raiz;
@@ -63,19 +62,6 @@ public class Arbol {
         if (actual == null) return Optional.empty();
         if (actual.getDato().equals(info)) return Optional.of(actual);
         return Optional.ofNullable(buscarNodo(actual.getNodoSi(), info).orElse(buscarNodo(actual.getNodoNo(), info).orElse(null)));
-    }
-
-
-
-    public int nivel(Informacion dato) {
-        return nivelRec(raiz, dato, 0);
-    }
-
-    private int nivelRec(Nodo<Informacion> nodo, Informacion dato, int nivel) {
-        if (nodo == null) return -1;
-        if (nodo.getDato().equals(dato)) return nivel;
-        int izq = nivelRec(nodo.getNodoNo(), dato, nivel + 1);
-        return izq != -1 ? izq : nivelRec(nodo.getNodoSi(), dato, nivel + 1);
     }
 
     public boolean existeDato(Informacion dato) {
@@ -135,7 +121,7 @@ public class Arbol {
         if (nodo == null) return;
 
         if (nivel == 1) {
-            print.print("\t"+ (nodo.getDato() instanceof Animal?"Animal: ": "Rasgo1: ")+ nodo.getDato().getInfo() + ", Nivel: " + nodo.getNivel() + "\n");
+            print.print("\t"+ (nodo.getDato() instanceof Animal?"Animal: ": "Rasgo: ")+ nodo.getDato().getInfo() + ", Nivel: " + nodo.getNivel() + "\n");
         } else if (nivel > 1) {
             obtenerDatosNivel(nodo.getNodoNo(), nivel - 1);
             obtenerDatosNivel(nodo.getNodoSi(), nivel - 1);
@@ -194,8 +180,9 @@ public class Arbol {
     }
 
 
-
-
+    public void setRaiz(Nodo raiz) {
+        this.raiz = raiz;
+    }
 }
 
 

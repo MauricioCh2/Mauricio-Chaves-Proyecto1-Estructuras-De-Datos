@@ -3,8 +3,8 @@ package org.example.Entities;
 import java.util.Objects;
 
 public abstract class InformacionConNivel implements Informacion {
-    private String info;
-    private int nivel; // Campo para almacenar el nivel
+    private final String info;
+    private final int nivel; // Campo para almacenar el nivel
 
     public InformacionConNivel(String info) {
         this.info = info;
@@ -24,10 +24,6 @@ public abstract class InformacionConNivel implements Informacion {
     public int getNivel() {
         return nivel;
     }
-    public  void setNivel(int nivel){
-        this.nivel = nivel;
-    }
-
 
 
     @Override

@@ -1,0 +1,105 @@
+{
+    "tipo": "Caracteristica",
+    "nodoSi": {
+        "tipo": "Caracteristica",
+        "nodoSi": {
+            "tipo": "Animal",
+            "dato": "Gallina",
+            "nivel": 2
+        },
+        "dato": "Cacarea",
+        "nivel": 1,
+        "nodoNo": {
+            "tipo": "Animal",
+            "dato": "Águila",
+            "nivel": 2
+        }
+    },
+    "dato": "ave",
+    "nivel": 0,
+    "nodoNo": {
+        "tipo": "Caracteristica",
+        "nodoSi": {
+            "tipo": "Animal",
+            "dato": "Lagarto",
+            "nivel": 2
+        },
+        "dato": "reptil",
+        "nivel": 1,
+        "nodoNo": {
+            "tipo": "Caracteristica",
+            "nodoSi": {
+                "tipo": "Caracteristica",
+                "nodoSi": {
+                    "tipo": "Animal",
+                    "dato": "Ballena",
+                    "nivel": 4
+                },
+                "dato": "acuatico",
+                "nivel": 3,
+                "nodoNo": {
+                    "tipo": "Caracteristica",
+                    "nodoSi": {
+                        "tipo": "Animal",
+                        "dato": "Gato",
+                        "nivel": 5
+                    },
+                    "dato": "maulla",
+                    "nivel": 4,
+                    "nodoNo": {
+                        "tipo": "Animal",
+                        "dato": "Perro",
+                        "nivel": 5
+                    }
+                }
+            },
+            "dato": "mamifero",
+            "nivel": 2,
+            "nodoNo": {
+                "tipo": "Caracteristica",
+                "nodoSi": {
+                    "tipo": "Animal",
+                    "dato": "Beta",
+                    "nivel": 4
+                },
+                "dato": "pez",
+                "nivel": 3,
+                "nodoNo": {
+                    "tipo": "Caracteristica",
+                    "nodoSi": {
+                        "tipo": "Animal",
+                        "dato": "Araña",
+                        "nivel": 5
+                    },
+                    "dato": "invertebrado",
+                    "nivel": 4,
+                    "nodoNo": {
+                        "tipo": "Caracteristica",
+                        "nodoSi": {
+                            "tipo": "Animal",
+                            "dato": "Rana",
+                            "nivel": 6
+                        },
+                        "dato": "anfibio",
+                        "nivel": 5,
+                        "nodoNo": {
+                            "tipo": "Caracteristica",
+                            "nodoSi": {
+                                "tipo": "Animal",
+                                "dato": "Dodo",
+                                "nivel": 7
+                            },
+                            "dato": "Extinto",
+                            "nivel": 6,
+                            "nodoNo": {
+                                "tipo": "Animal",
+                                "dato": "Culebra",
+                                "nivel": 7
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

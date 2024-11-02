@@ -11,9 +11,10 @@ import org.example.utilities.print;
 public class BusquedaAnimal {
     private Arbol arbol;
     private Contenedor<Informacion> lista = new Contenedor<>();
+    //Runnable para imprimir el árbol
     private final Runnable endl = System.out::println;
-    private final Runnable printArboRunnable = () -> { // Runnable para que se mas facil estar imprimuiendo el arbol
-        print.println("Raiz: "+ arbol.getRaizDato().getInfo());
+    private final Runnable printArboRunnable = () -> { // Runnable para que sea más fácil estar imprimiendo el árbol
+        print.println("Raíz: "+ arbol.getRaizDato().getInfo());
         print.yellowLine();//-------------------------
         print.printlnColor(print.BLUE,"InOrden: ");
         arbol.imprimirRecorrido("inOrden");
@@ -32,6 +33,7 @@ public class BusquedaAnimal {
         print.yellowLine();//-------------------------
     };
 
+    //Constructor----------------------------------------------------------------------------------------------------------------------------------------------
     public BusquedaAnimal(){
         this.arbol = new Arbol();
         preCarga();
@@ -39,78 +41,83 @@ public class BusquedaAnimal {
         pruebas();
     }
 
-    public void preCarga(){ //Proximamente con json
-        print.printlnColor(print.GREEN,"Cargando datos del arbol!");
-        Caracteristica ave = new Caracteristica("ave");
-        Caracteristica reptil = new Caracteristica("reptil");
-        Caracteristica mamifero = new Caracteristica("mamifero");
-        Caracteristica acuatico = new Caracteristica("acuatico");
-        Caracteristica maulla = new Caracteristica("maulla");
-        Caracteristica pez = new Caracteristica("pez");
-        Caracteristica invertebrado = new Caracteristica("invertebrado");
-        Caracteristica anfibio = new Caracteristica("anfibio");
-
-        Animal aguila = new Animal("Águila");
-        Animal lagarto = new Animal("Lagarto");
-        Animal ballena = new Animal("Ballena");
-        Animal gato = new Animal("Gato");
-        Animal perro = new Animal("Perro");
-        Animal beta = new Animal("Beta");
-        Animal arana = new Animal("Araña");
-        Animal rana = new Animal("Rana");
-        Animal culebra = new Animal("Culebra");
-
-        // Construcción manual del árbol siguiendo la estructura de la imagen
-        arbol.insertar(ave);//Raiz
-        // Nivel 2
-        arbol.insertarHijo(ave, aguila, true);      // ave -> Sí -> aguila
-        arbol.insertarHijo(ave, reptil, false);     // ave -> No -> reptil
-
-        // Nivel 2
-        arbol.insertarHijo(reptil, lagarto, true);  // reptil -> Sí -> lagarto
-        arbol.insertarHijo(reptil, mamifero, false);// reptil -> No -> mamifero
-
-        // Nivel 3
-        arbol.insertarHijo(mamifero, acuatico, true);   // mamifero -> Sí -> acuatico
-        arbol.insertarHijo(mamifero, pez, false);       // mamifero -> No -> pez
-
-        // Nivel 4
-        arbol.insertarHijo(acuatico, ballena, true);    // acuatico -> Sí -> ballena
-        arbol.insertarHijo(acuatico, maulla, false);    // acuatico -> No -> maulla
-
-        // Nivel 5
-        arbol.insertarHijo(maulla, gato, true);         // maulla -> Sí -> gato
-        arbol.insertarHijo(maulla, perro, false);       // maulla -> No -> perro
-
-        // Nivel 4 - Rama "pez"
-        arbol.insertarHijo(pez, beta, true);            // pez -> Sí -> beta
-        arbol.insertarHijo(pez, invertebrado, false);   // pez -> No -> invertebrado
-
-        // Nivel 5
-        arbol.insertarHijo(invertebrado, arana, true);  // invertebrado -> Sí -> arana
-        arbol.insertarHijo(invertebrado, anfibio, false); // invertebrado -> No -> anfibio
-
-        // Nivel 6
-        arbol.insertarHijo(anfibio, rana, true);        // anfibio -> Sí -> rana
-        arbol.insertarHijo(anfibio, culebra, false);    // anfibio -> No -> culebra
-
+    public void preCarga(){ //Próximamente con json
+        arbol = JSON.cargarArbol();
     }
     public void pruebas(){
-        print.printColor(print.GREEN,"Arbol creado\n");
+        print.printColor(print.GREEN,"Árbol creado\n");
         printArboRunnable.run();
 
     }
 
+    //Inicio de juego------------------------------------------------------------------------------------------------------------------------------------------
+    public void iniciar(){
+        print.printlnColor(print.PURPLE, "Iniciando el programa");
+        menuInicio();
+    }
+    public void menuInicio(){
+        int opcion;
+        do{
+            print.printlnColor(print.Orange,"Que quieres hacer?");
+            print.println( print.YELLOW+ "[1]." + print.RESET + " Jugar a adivinar el animal");
+            print.println( print.YELLOW+ "[2]." + print.RESET + " Verificar animales y características por medio de litas");
+            print.println( print.YELLOW+ "[3]." + print.RESET + " Recargar el árbol con datos quemados");
+            print.println( print.YELLOW+ "[4]." + print.RESET + " Salir");
+            opcion = ingresoDatos.validOpcionNum(4, "Ingrese una opción: ");
+            ejecutarOpcionInicio(opcion);
+        }while(opcion != 4);
+
+    }
+    public void ejecutarOpcionInicio(int opcion){
+        switch (opcion) {
+            case 1:
+                jugar();
+                if(ingresoDatos.validBoolean("¿Deseas guardar el árbol actual? (s/n): ")){
+                    JSON.guardarArbol(arbol);
+                }
+                break;
+            case 2:
+                menuLista();
+                break;
+            case 3:
+                if(ingresoDatos.validBoolean("¿Estas seguro que deseas sobreescribir la lista, perderás el árbol actual? (s/n): ")) {
+                    cargaQuemado();
+                }
+                break;
+            case 4:
+                print.printlnColor(print.RED, "Saliendo del programa");
+                break;
+        }
+        endl.run();
+        endl.run();
+    }
+
+
+    //Juego de adivinar el animal(Parte 1)---------------------------------------------------------------------------------------------------------------------
+    public void jugar(){
+        print.yellowLine();
+        print.printlnColor(print.GREEN, "Piensa en un animal y yo adivinaré cuál es!");
+        print.printlnColor(print.GREEN, "Responde con 's' para sí y 'n' para no");
+        print.yellowLine();
+
+        do {
+            ConsoleUtils.clear();
+            preguntar();
+            print.printlnColor(print.GREEN,"Estado actual del árbol");
+            printArboRunnable.run();
+        } while (ingresoDatos.validBoolean("¿Quieres seguir jugando? (s/n): "));
+    }
+
     //Pregunta-------------------------------------------------------------------------------------------------------------------------------------------------
-    public void preguntar(){ //Aqui se hace la pregunta usando un arbol auxiliar para no tener que reiniciar el arbol en caso de volver a preguntar
+    public void preguntar(){ //Aquí se hace la pregunta usando un árbol auxiliar para no tener que reiniciar el árbol en caso de volver a preguntar
 
         Nodo<Informacion> nodoAux = arbol.getRaiz();
         preguntarRec(nodoAux);
 
-        //aqui hay que pone la parte de ingreso de caracteristica y animal
+        //aquí hay que pone la parte de ingreso de característica y animal
     }
 
-    private void preguntarRec(Nodo<Informacion> nodo) {//dependiendo de si es un animal o una caracteristica se procesarad e amnera diferente
+    private void preguntarRec(Nodo<Informacion> nodo) {//dependiendo de si es un animal o una característica se procesará de manera diferente
         if (nodo.getDato() instanceof Animal) {
             procesarAnimal((Animal) nodo.getDato(), nodo);
         } else {
@@ -118,19 +125,19 @@ public class BusquedaAnimal {
         }
     }
 
-    private void procesarAnimal(Animal animal, Nodo<Informacion> nodo) {//Procesa la opcion del usuario
+    private void procesarAnimal(Animal animal, Nodo<Informacion> nodo) {//Procesa la opción del usuario
         print.printlnColor(print.GREEN, "El animal es: " + animal.getInfo());
         boolean respuesta = ingresoDatos.validBoolean(" (s/n): ");
         if (respuesta) {
             print.printlnColor(print.GREEN, "¡Soy un genio!");
         } else {
-            agregarNuevoAnimal(nodo);
+            agregarNuevoAnimal(nodo);//En caso de que se agregue un nuevo animal se procesara la solicitud
         }
         ConsoleUtils.timeOut(3);
 
     }
 
-    private void agregarNuevoAnimal(Nodo<Informacion> nodo) {
+    private void agregarNuevoAnimal(Nodo<Informacion> nodo) {//Ingreso de nuevo animal y característica por medio de una rotación en el árbol
         print.printlnColor(print.GREEN, "¡Oh no! ¿Qué animal era?");
         String nuevoAnimal = ingresoDatos.validString("Por favor, ingresa el nombre del animal: ");
         // Verificar si el animal ya existe
@@ -149,7 +156,7 @@ public class BusquedaAnimal {
             return;
         }
 
-        // Insertar la nueva característica y el nuevo animal en el árbol (rotacion izquierda)
+        // Insertar la nueva característica y el nuevo animal en el árbol (rotación izquierda)
         arbol.actualizarConNuevaCaracteristica(nodo, nuevoAnimal, nuevaCaracteristica);
     }
 
@@ -160,21 +167,24 @@ public class BusquedaAnimal {
         preguntarRec(respuesta ? nodo.getNodoSi() : nodo.getNodoNo());
     }
 
-    //Visualizacion con listas (parte 2)-------------------------------------------------------------------------------------------------------------------------------------------
+    //Visualización con listas (parte 2)-------------------------------------------------------------------------------------------------------------------------------------------
     public void menuLista(){
+        int opcion;
         endl.run();
-        endl.run();
-        print.printlnColor(print.Orange, "¿Qué deseas hacer?");
-        print.println(print.YELLOW+ "[1]." + print.RESET + "  Añadir animales a la lista de manera acendente");
-        print.println(print.YELLOW+ "[2]." + print.RESET + "  Añadir animales a la lista de manera descendente");
-        print.println(print.YELLOW+ "[3]." + print.RESET + "  Ordenar la lista en orden de su codigo");
-        print.println(print.YELLOW+ "[4]." + print.RESET + "  Invertir lista");
-        print.println(print.YELLOW+ "[5]." + print.RESET + "  Mostrar la lista");
-        print.println(print.YELLOW+ "[6]." + print.RESET + "  Buscar un animal en la lista");
-        print.println(print.YELLOW+ "[7]." + print.RESET + "  Atras");
+        do {
+            endl.run();
+            print.printlnColor(print.Orange, "¿Qué deseas hacer?");
+            print.println(print.YELLOW + "[1]." + print.RESET + "  Añadir animales a la lista de manera ascendente");
+            print.println(print.YELLOW + "[2]." + print.RESET + "  Añadir animales a la lista de manera descendente");
+            print.println(print.YELLOW + "[3]." + print.RESET + "  Ordenar la lista en orden de su código");
+            print.println(print.YELLOW + "[4]." + print.RESET + "  Invertir lista");
+            print.println(print.YELLOW + "[5]." + print.RESET + "  Mostrar la lista");
+            print.println(print.YELLOW + "[6]." + print.RESET + "  Buscar un animal en la lista");
+            print.println(print.YELLOW + "[7]." + print.RESET + "  Atrás");
 
-        int opcion = ingresoDatos.validOpcionNum(7, "Ingrese una opcion: ");
-        ejecutarOpcionLista(opcion);
+            opcion = ingresoDatos.validOpcionNum(7, "Ingrese una opción: ");
+            ejecutarOpcionLista(opcion);
+        }while (opcion != 7);
     }
 
     private void agregarAnimalesALista(boolean agregarInicio) {
@@ -185,13 +195,27 @@ public class BusquedaAnimal {
             }
         }
 
-        print.printlnColor(print.GREEN, "Agregando animales a la lista en " + (agregarInicio ? "pre Orden con addFirst()" : "post Orden con addLast()"));
         lista = arbol.obtenerDatosInOrder(agregarInicio);
         imprimirLista();
+        print.printlnColor(print.GREEN, "Agregando animales a la lista en " + (agregarInicio ? "pre Orden con addFirst()" : "post Orden con addLast()"));
+
 
     }
 
     private void imprimirLista() {
+        if(lista.isEmpty()){
+            print.printlnColor(print.RED, "Error: La lista está vacía");
+            if(ingresoDatos.validBoolean("¿Deseas agregar animales a la lista? (s/n): ")){
+                int op = ingresoDatos.validOpcionNum(2,
+                        "Agregar animales:"+
+                                print.Orange+ "\n[1]." + print.RESET+ " Inicio "+
+                                print.Orange+ "\n[2]." + print.RESET+ " Al final \n");
+                    agregarAnimalesALista(op == 1);
+
+            }
+
+            return;
+        }
         print.printlnColor(print.GREEN, "Lista de animales: ");
         lista.display();
     }
@@ -225,12 +249,18 @@ public class BusquedaAnimal {
                 break;
             case 3:
                 //sort();
+                print.printlnColor(print.GREEN, "Lista actual...");
+                imprimirLista();
                 lista.sort();
+                print.printlnColor(print.GREEN, "Lista ordenada...");
                 imprimirLista();
                 break;
             case 4:
                 //reverse();
+                print.printlnColor(print.GREEN, "Lista actual...");
+                imprimirLista();
                 lista.reverse();
+                print.printlnColor(print.GREEN, "Lista reversa...");
                 imprimirLista();
                 break;
             case 5:
@@ -247,52 +277,73 @@ public class BusquedaAnimal {
         }
     }
 
-    //Iniciar el juego-----------------------------------------------------------------------------------------------------------------------------------------
-    public void jugar(){
-        print.yellowLine();
-        print.printlnColor(print.GREEN, "Piensa en un animal y yo adivinaré cuál es!");
-        print.printlnColor(print.GREEN, "Responde con 's' para sí y 'n' para no");
-        print.yellowLine();
 
-        do {
-            ConsoleUtils.clear();
-            preguntar();
-            print.printlnColor(print.GREEN,"Estado actual del arbol");
-            printArboRunnable.run();
-        } while (ingresoDatos.validBoolean("¿Quieres seguir jugando? (s/n): "));
+
+
+
+
+
+
+
+
+
+    //Carga de lista con datos quemados por si acaso--------------------------------------------------------------------
+    private void cargaQuemado(){
+        arbol = new Arbol();//Se reinicia el árbol
+        print.printlnColor(print.GREEN,"Cargando datos del árbol!");
+        Caracteristica ave = new Caracteristica("ave");
+        Caracteristica reptil = new Caracteristica("reptil");
+        Caracteristica mamifero = new Caracteristica("mamifero");
+        Caracteristica acuatico = new Caracteristica("acuatico");
+        Caracteristica maulla = new Caracteristica("maulla");
+        Caracteristica pez = new Caracteristica("pez");
+        Caracteristica invertebrado = new Caracteristica("invertebrado");
+        Caracteristica anfibio = new Caracteristica("anfibio");
+
+        Animal aguila = new Animal("Águila");
+        Animal lagarto = new Animal("Lagarto");
+        Animal ballena = new Animal("Ballena");
+        Animal gato = new Animal("Gato");
+        Animal perro = new Animal("Perro");
+        Animal beta = new Animal("Beta");
+        Animal arana = new Animal("Araña");
+        Animal rana = new Animal("Rana");
+        Animal culebra = new Animal("Culebra");
+
+        // Construcción manual del árbol siguiendo la estructura de la imagen
+        arbol.insertar(ave);//Raíz
+        // Nivel 2
+        arbol.insertarHijo(ave, aguila, true);      // ave -> Sí -> aguila
+        arbol.insertarHijo(ave, reptil, false);     // ave -> No -> reptil
+
+        // Nivel 2
+        arbol.insertarHijo(reptil, lagarto, true);  // reptil -> Sí -> lagarto
+        arbol.insertarHijo(reptil, mamifero, false);// reptil -> No -> mamífero
+
+        // Nivel 3
+        arbol.insertarHijo(mamifero, acuatico, true);   // mamífero -> Sí -> acuático
+        arbol.insertarHijo(mamifero, pez, false);       // mamífero -> No -> pez
+
+        // Nivel 4
+        arbol.insertarHijo(acuatico, ballena, true);    // acuático -> Sí -> ballena
+        arbol.insertarHijo(acuatico, maulla, false);    // acuático -> No -> maúlla
+
+        // Nivel 5
+        arbol.insertarHijo(maulla, gato, true);         // maúlla -> Sí -> gato
+        arbol.insertarHijo(maulla, perro, false);       // maúlla -> No -> perro
+
+        // Nivel 4 - Rama "pez"
+        arbol.insertarHijo(pez, beta, true);            // pez -> Sí -> beta
+        arbol.insertarHijo(pez, invertebrado, false);   // pez -> No -> invertebrado
+
+        // Nivel 5
+        arbol.insertarHijo(invertebrado, arana, true);  // invertebrado -> Sí -> arana
+        arbol.insertarHijo(invertebrado, anfibio, false); // invertebrado -> No -> anfibio
+
+        // Nivel 6
+        arbol.insertarHijo(anfibio, rana, true);        // anfibio -> Sí -> rana
+        arbol.insertarHijo(anfibio, culebra, false);    // anfibio -> No -> culebra
+
     }
-
-    public void iniciar(){
-        int opcion;
-
-        print.printlnColor(print.PURPLE, "Iniciando el programa");
-
-        do {
-            print.printlnColor(print.Orange,"Que quieres hacer?");
-
-            print.println( print.YELLOW+ "[1]." + print.RESET + " Jugar a adivinar el animal");
-            print.println( print.YELLOW+ "[2]." + print.RESET + " Verificar animales y caracteristicas por medio de litas");
-            print.println( print.YELLOW+ "[3]." + print.RESET + " Salir");
-            opcion = ingresoDatos.validOpcionNum(3, "Ingrese una opcion: ");
-            switch (opcion) {
-                case 1:
-                    jugar();
-                    break;
-                case 2:
-
-                    menuLista();
-                    break;
-                case 3:
-                    print.printlnColor(print.RED, "Saliendo del programa");
-                    break;
-            }
-            endl.run();
-            endl.run();
-        }while(opcion != 3);
-
-
-
-    }
-
 
 }

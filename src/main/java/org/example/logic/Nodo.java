@@ -2,7 +2,7 @@ package org.example.logic;
 
 public class Nodo<T> {
     private  T dato;
-    private int nivel;
+    private final int nivel;
     private Nodo<T> hijoNo;
     private Nodo<T> hijoSi;
 

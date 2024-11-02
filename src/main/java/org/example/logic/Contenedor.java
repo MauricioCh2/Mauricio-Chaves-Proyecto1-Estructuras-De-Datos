@@ -4,7 +4,6 @@ package org.example.logic;
 import org.example.Entities.Animal;
 import org.example.Entities.Informacion;
 
-import org.example.Entities.InformacionConNivel;
 import org.example.utilities.print;
 
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class Contenedor<T extends Comparable<? super T>>{
 
     public void display() {
         if (inicio == null) {
-            print.printlnColor(print.RED, "No hay datos para imprimir, la lista esta vacia");
+            return;
         } else {
             actual = inicio;
             while (actual.getNodoSig() != null) {
@@ -69,7 +68,7 @@ public class Contenedor<T extends Comparable<? super T>>{
 
     public void sort(){
         if(inicio == null) {
-            print.printlnColor(print.RED, "No hay datos para ordenar, la lista esta vacia");
+            print.printlnColor(print.RED, "No hay datos para ordenar, la lista esta vacía");
         }
         else {
             quickSort(inicio, ultimo);
@@ -89,7 +88,7 @@ public class Contenedor<T extends Comparable<? super T>>{
 
         while (j != ultimo) {
             // Usando el método compareTo genérico
-            if (j.getDato().compareTo(pivote) <= 0) {//si el dato es menor o igual al pivote se intercambian (el compare ayuda a que sea generico)
+            if (j.getDato().compareTo(pivote) <= 0) {//si el dato es menor o igual al pivote se intercambian (el compare ayuda a que sea genérico)
                 i = (i == null) ? inicio : i.getNodoSig();
                 T temp = i.getDato();
                 i.setDato(j.getDato());
@@ -111,7 +110,7 @@ public class Contenedor<T extends Comparable<? super T>>{
 
     public void reverse(){
         if(inicio == null){
-            print.printlnColor(print.RED, "No hay datos para revertir, la lista esta vacia");
+            print.printlnColor(print.RED, "No hay datos para revertir, la lista esta vacía");
         }else{
             NodoL<T> temp = null;
             actual = inicio;
@@ -128,12 +127,12 @@ public class Contenedor<T extends Comparable<? super T>>{
     }
 
 
-    private void actualizarMapa(T dato) { //En caso que el conenedor posea animales los mapeara
+    private void actualizarMapa(T dato) { //En caso de que el contenedor posea animales los mapeara
 
         if (dato instanceof Animal) {
             Informacion info = (Animal) dato;
             Contenedor<String> contenedorCaracteristicas = new Contenedor<>();
-            // LOGICA DE LLENADO DE CONTENEDOR DE CARACTERISTICAS
+            // LÓGICA DE LLENADO DE CONTENEDOR DE CARACTERISTICAS
 
             map.put(info.getInfo(), contenedorCaracteristicas);
         }
