@@ -2,7 +2,7 @@ package org.example.Entities;
 
 import java.util.Objects;
 
-public class Animal extends InformacionConNivel  {
+public class Animal extends Informacion {
 
     public Animal(String nombre) {
         super(nombre);

@@ -14,7 +14,7 @@ public class ingresoDatos {
             String input = scanner.nextLine().trim().toLowerCase();
             valid = input.equals("si") || input.equals("s")|| input.equals("1") || input.equals("true") || input.equals("yes")|| input.equals("y") ||  input.equals("0") || input.equals("false") || input.equals("no")|| input.equals("n");
             if (!valid){
-                print.printlnColor(print.RED,"DATOS ERRONEOS: Por favor ingrese una respuesta valida ");
+                print.printlnColor(print.RED,"DATOS INCORRECTOS: Por favor ingrese una respuesta valida ");
             }else {
                 valid = input.equals("si") || input.equals("s")|| input.equals("1") || input.equals("true") || input.equals("yes")|| input.equals("y");
                 return valid;
@@ -33,7 +33,7 @@ public class ingresoDatos {
             input = scanner.nextLine().trim();
             valid = input.matches("^[a-zA-ZñÑ\\s]*$");
             if (!valid|| input.isEmpty()) {
-                print.printlnColor(print.RED, "DATOS ERRONEOS: No se permiten caracteres especiales o números");
+                print.printlnColor(print.RED, "DATOS INCORRECTOS: No se permiten caracteres especiales o números");
             }
         } while (!valid);
         return input;
@@ -50,10 +50,10 @@ public class ingresoDatos {
                 input = Integer.parseInt(userInput);
                 valid = input > 0 && input <= max;
                 if (!valid) {
-                    print.printlnColor(print.RED, "DATOS ERRONEOS: Por favor ingrese una opción válida");
+                    print.printlnColor(print.RED, "DATOS INCORRECTOS: Por favor ingrese una opción válida");
                 }
             } catch (NumberFormatException e) {
-                print.printlnColor(print.RED, "DATOS ERRONEOS: Por favor ingrese un número válido");
+                print.printlnColor(print.RED, "DATOS INCORRECTOS: Por favor ingrese un número válido");
                 valid = false;
             }
         } while (!valid);

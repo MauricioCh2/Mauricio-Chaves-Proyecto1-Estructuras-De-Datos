@@ -9,12 +9,12 @@ import java.util.Map;
 public class Contenedor<T extends Comparable<? super T>>{
     private  NodoL<T> dummy;
     private NodoL<T> actual;
-    private NodoL<T> ultimo;
+    private NodoL<T> back;
 
     public Contenedor(){
         this.dummy = null;
         this.actual = null;
-        this.ultimo = null;
+        this.back = null;
 
     }
     public Contenedor(Contenedor<T> otro) {
@@ -31,7 +31,7 @@ public class Contenedor<T extends Comparable<? super T>>{
         if (dummy != null) {
             dummy.setNodoAnt(nuevo);
         } else {
-            ultimo = nuevo; // Si la lista estaba vacía, el último será el nuevo nodo
+            back = nuevo; // Si la lista estaba vacía, el último será el nuevo nodo
         }
         dummy = nuevo;
 
@@ -40,13 +40,13 @@ public class Contenedor<T extends Comparable<? super T>>{
     }
 
     public void addLast(T dato) {
-        NodoL<T> nuevo = new NodoL<>(dato, ultimo, null);
+        NodoL<T> nuevo = new NodoL<>(dato, back, null);
         if (dummy == null) {
             dummy = nuevo;
         } else {
-            ultimo.setNodoSig(nuevo);
+            back.setNodoSig(nuevo);
         }
-        ultimo = nuevo;
+        back = nuevo;
 
     }
 
@@ -55,7 +55,7 @@ public class Contenedor<T extends Comparable<? super T>>{
             print.printlnColor(print.RED, "No hay datos para ordenar, la lista esta vacía");
         }
         else {
-            quickSort(dummy, ultimo);
+            quickSort(dummy, back);
         }
     }
     private void quickSort(NodoL<T> inicio, NodoL<T> ultimo){

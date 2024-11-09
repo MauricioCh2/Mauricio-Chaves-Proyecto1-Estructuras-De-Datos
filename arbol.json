@@ -1,19 +1,9 @@
 {
     "tipo": "Caracteristica",
     "nodoSi": {
-        "tipo": "Caracteristica",
-        "nodoSi": {
-            "tipo": "Animal",
-            "dato": "Gallina",
-            "nivel": 2
-        },
-        "dato": "Cacarea",
-        "nivel": 1,
-        "nodoNo": {
-            "tipo": "Animal",
-            "dato": "Águila",
-            "nivel": 2
-        }
+        "tipo": "Animal",
+        "dato": "Águila",
+        "nivel": 1
     },
     "dato": "ave",
     "nivel": 0,
@@ -76,36 +66,16 @@
                     "nodoNo": {
                         "tipo": "Caracteristica",
                         "nodoSi": {
-                            "tipo": "Caracteristica",
-                            "nodoSi": {
-                                "tipo": "Animal",
-                                "dato": "Salamandra",
-                                "nivel": 7
-                            },
-                            "dato": "Tiene cola",
-                            "nivel": 6,
-                            "nodoNo": {
-                                "tipo": "Animal",
-                                "dato": "Rana",
-                                "nivel": 7
-                            }
+                            "tipo": "Animal",
+                            "dato": "Rana",
+                            "nivel": 6
                         },
                         "dato": "anfibio",
                         "nivel": 5,
                         "nodoNo": {
-                            "tipo": "Caracteristica",
-                            "nodoSi": {
-                                "tipo": "Animal",
-                                "dato": "Dodo",
-                                "nivel": 7
-                            },
-                            "dato": "Extinto",
-                            "nivel": 6,
-                            "nodoNo": {
-                                "tipo": "Animal",
-                                "dato": "Culebra",
-                                "nivel": 7
-                            }
+                            "tipo": "Animal",
+                            "dato": "Culebra",
+                            "nivel": 6
                         }
                     }
                 }

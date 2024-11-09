@@ -2,7 +2,7 @@ package org.example.Entities;
 
 import java.util.Objects;
 
-public class Caracteristica extends InformacionConNivel {
+public class Caracteristica extends Informacion {
 
     public Caracteristica(String texto) {
         super(texto); // Usa el constructor de InformacionConNivel para establecer la info

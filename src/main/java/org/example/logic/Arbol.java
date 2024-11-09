@@ -17,6 +17,7 @@ public class Arbol {
 
 
     //Inserciones ------------------------------------------------------------------------------------------------------
+    //Nota esto solo se usa para cargar de manera quemada los datos
     public void insertar(Informacion dato) { // Inserta el primer nodo
         if (raiz == null) {
             print.printlnColor(print.PURPLE, "<<<<Instanciando la primera vez>>>>");
@@ -133,13 +134,13 @@ public class Arbol {
     //Estos metodos son usados especificamente para la parte 2
     public Contenedor<Informacion> obtenerDatosYMapear(boolean agregarInicio, Map<String, Contenedor<String>> map) {
         Contenedor<Informacion> datos = new Contenedor<>();
-        Contenedor<String> contenedorActual = new Contenedor<>();
-        obtenerDatosYMapearRec(raiz, datos, agregarInicio, contenedorActual, map);
+        Contenedor<String> caracteristicas = new Contenedor<>();
+        obtenerDatosYMapearRec(raiz, datos, agregarInicio, caracteristicas, map);
         return datos;
     }
 
     private void obtenerDatosYMapearRec(Nodo<Informacion> nodo, Contenedor<Informacion> datos,
-                                        boolean agregarInicio, Contenedor<String> contenedorActual,
+                                        boolean agregarInicio, Contenedor<String> caracteristicas,
                                         Map<String, Contenedor<String>> map) {
         if (nodo == null) {//Si el nodo es nulo se retorna, es el caso base
             return;
@@ -152,16 +153,16 @@ public class Arbol {
 
         // Manejar el mapeo de características
         if (nodo.getDato() instanceof Caracteristica) {
-            Contenedor<String> contenedorSi = new Contenedor<>(contenedorActual);
+            Contenedor<String> contenedorSi = new Contenedor<>(caracteristicas);
             contenedorSi.addLast(nodo.getDato().getInfo().toLowerCase());
 
             // Recursión
-            obtenerDatosYMapearRec(nodo.getNodoNo(), datos, agregarInicio, contenedorActual, map);
+            obtenerDatosYMapearRec(nodo.getNodoNo(), datos, agregarInicio, caracteristicas, map);
             obtenerDatosYMapearRec(nodo.getNodoSi(), datos, agregarInicio, contenedorSi, map);
         } else if (nodo.getDato() instanceof Animal) {//Los animales son hojas asi que parara en el siguiente la recursión
             // Guardar características del animal
             Animal animal = (Animal) nodo.getDato();
-            map.put(animal.getInfo().toLowerCase(), new Contenedor<>(contenedorActual));
+            map.put(animal.getInfo().toLowerCase(), new Contenedor<>(caracteristicas));
 
         }
 
@@ -179,13 +180,6 @@ public class Arbol {
                 datos.addFirst(animal);
             } else {
                 datos.addLast(animal);
-            }
-        } else if (dato instanceof Caracteristica) {
-            Caracteristica caracteristica = new Caracteristica(dato.getInfo(), nodo.getNivel());
-            if (agregarInicio) {
-                datos.addFirst(caracteristica);
-            } else {
-                datos.addLast(caracteristica);
             }
         }
     }
