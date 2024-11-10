@@ -204,7 +204,6 @@ public class BusquedaAnimal {
         }
 
         lista = arbol.obtenerDatosYMapear(agregarInicio, map);
-        //arbol.mapearCaracteristicas(map);
         imprimirLista();
         print.printlnColor(print.GREEN, "Agregando animales a la lista en " + (agregarInicio ? "pre Orden con addFirst()" : "post Orden con addLast()"));
 
@@ -229,20 +228,6 @@ public class BusquedaAnimal {
         lista.display();
     }
 
-
-    // Método que realiza el mapeo de características desde la lista al mapa
-//    private void mapearCaracteristicas() {
-//        Contenedor<String> caracteristicas = new Contenedor<>();
-//
-//        for (NodoL<Informacion> nodo = lista.getFirst(); nodo != null; nodo = nodo.getNodoSig()) {
-//            if (nodo.getDato() instanceof Caracteristica) {
-//               arbol.mapearCaracteristicas(nodo.getDato().getInfo(), caracteristicas, map);
-//            } else if (nodo.getDato() instanceof Animal) {
-//                String nombreAnimal = nodo.getDato().getInfo();
-//                map.put(nombreAnimal, new Contenedor<>(caracteristicas));
-//            }
-//        }
-//    }
 
 
     private void search() {
@@ -298,9 +283,6 @@ public class BusquedaAnimal {
 
         }
     }
-
-
-
 
 
 

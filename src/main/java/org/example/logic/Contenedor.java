@@ -7,55 +7,47 @@ import java.util.Map;
 
 
 public class Contenedor<T extends Comparable<? super T>>{
-    private  NodoL<T> dummy;
-    private NodoL<T> actual;
-    private NodoL<T> back;
+    private   NodoL<T> dummy;
+    private  NodoL<T> back;
+
 
     public Contenedor(){
-        this.dummy = null;
-        this.actual = null;
-        this.back = null;
+        this.dummy = new NodoL<>(null, null, null);
+        this.back = new NodoL<>(null, null, null);
+
+        this.dummy.setNodoSig(back);
+        this.back.setNodoAnt(dummy);
 
     }
     public Contenedor(Contenedor<T> otro) {
         this(); // Inicializar el contenedor vacío
-        NodoL<T> actual = otro.dummy;
-        while (actual != null) {
+        NodoL<T> actual = otro.dummy.getNodoSig();
+        while (actual != otro.back) {
             this.addLast(actual.getDato()); // Copiar cada dato al nuevo contenedor
             actual = actual.getNodoSig();
         }
     }
 
     public void addFirst(T dato){
-        NodoL<T> nuevo = new NodoL<>(dato, null, dummy);
-        if (dummy != null) {
-            dummy.setNodoAnt(nuevo);
-        } else {
-            back = nuevo; // Si la lista estaba vacía, el último será el nuevo nodo
-        }
-        dummy = nuevo;
-
-
+        NodoL<T> nuevo = new NodoL<>(dato, dummy, dummy.getNodoSig());
+        dummy.getNodoSig().setNodoAnt(nuevo);
+        dummy.setNodoSig(nuevo);
 
     }
 
     public void addLast(T dato) {
-        NodoL<T> nuevo = new NodoL<>(dato, back, null);
-        if (dummy == null) {
-            dummy = nuevo;
-        } else {
-            back.setNodoSig(nuevo);
-        }
-        back = nuevo;
+        NodoL<T> nuevo = new NodoL<>(dato, back.getNodoAnt(), back);
+        back.getNodoAnt().setNodoSig(nuevo);
+        back.setNodoAnt(nuevo);
 
     }
 
     public void sort(){
-        if(dummy == null) {
+        if(isEmpty()) {
             print.printlnColor(print.RED, "No hay datos para ordenar, la lista esta vacía");
         }
         else {
-            quickSort(dummy, back);
+            quickSort(dummy.getNodoSig(), back.getNodoAnt());
         }
     }
     private void quickSort(NodoL<T> inicio, NodoL<T> ultimo){
@@ -89,35 +81,41 @@ public class Contenedor<T extends Comparable<? super T>>{
         return i;
     }
 
-    public void reverse(){
-        if(dummy == null){
-            print.printlnColor(print.RED, "No hay datos para revertir, la lista esta vacía");
-        }else{
-            NodoL<T> temp = null;
-            actual = dummy;
-            while (actual != null){
-                temp = actual.getNodoAnt();//guarda el nodo anterior o null si es el primero
-                actual.setNodoAnt(actual.getNodoSig());//cambia el nodo anterior por el siguiente
-                actual.setNodoSig(temp);//Cambia el nodo siguiente por el anterior
-                actual = actual.getNodoAnt(); //vamos al anterior que antes era el siguiente y asi sucesivamente hasta llegar a null
-            }
-            if(temp != null){
-                dummy = temp.getNodoAnt();
-            }
+    public void reverse() {
+        if (isEmpty()) {
+            print.printlnColor(print.RED, "No hay datos para revertir, la lista está vacía");
+            return;
         }
+
+        NodoL<T> actual = dummy;
+        NodoL<T> temp;
+
+        // Recorre la lista desde dummy hasta back, invirtiendo las referencias
+        while (actual != null) {
+            temp = actual.getNodoAnt(); // Guarda la referencia anterior
+            actual.setNodoAnt(actual.getNodoSig()); // Cambia la referencia anterior por la siguiente
+            actual.setNodoSig(temp); // Cambia la referencia siguiente por la anterior
+            actual = actual.getNodoAnt(); // Avanza al siguiente nodo (en la dirección invertida)
+        }
+
+        // Ajusta dummy y back al final del proceso
+        temp = dummy;
+        this.dummy = back;
+        this.back = temp;
     }
 
 
+
     public void display() {
-        if (dummy == null) {
+        if (isEmpty()) {
             return;
         } else {
-            actual = dummy;
-            while (actual.getNodoSig() != null) {
-               print.print(actual.getDato() + " ");
-                actual = actual.getNodoSig();
+
+            NodoL<T> actualD = dummy.getNodoSig();
+            while (actualD!= back) {
+               print.print(actualD.getDato() + " ");
+                actualD = actualD.getNodoSig();
             }
-            print.print(actual.getDato() + " ");
         }
         print.println("");
     }
@@ -135,8 +133,8 @@ public class Contenedor<T extends Comparable<? super T>>{
         // Obtener las características del animal
         Contenedor<String> caracteristicas = map.get(animalL);
         print.print("'" + animalL + "'" + "-->[");
-        for (NodoL<String> nodo = caracteristicas.getFirst(); nodo != null; nodo = nodo.getNodoSig()) {
-            print.print("'" + nodo.getDato()+"'" + (nodo.getNodoSig() != null ? ", " : ""));
+        for (NodoL<String> nodo = caracteristicas.getFirst(); nodo != caracteristicas.back; nodo = nodo.getNodoSig()) {
+            print.print("'" + nodo.getDato()+"'" + (nodo.getNodoSig() != caracteristicas.back ? ", " : ""));
         }
         print.println("]");
 
@@ -145,10 +143,10 @@ public class Contenedor<T extends Comparable<? super T>>{
 
 
     public boolean isEmpty() {
-        return dummy == null;
+        return dummy.getNodoSig() == back;
     }
 
     public NodoL<T> getFirst() {
-        return dummy;
+        return isEmpty() ? null : dummy.getNodoSig();
     }
 }

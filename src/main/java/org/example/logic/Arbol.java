@@ -74,7 +74,7 @@ public class Arbol {
         if (nodo == null) {
             return false;
         }
-        if (nodo.getDato().getInfo().toLowerCase().equals(dato.getInfo().toLowerCase())) {
+        if (nodo.getDato().getInfo().equalsIgnoreCase(dato.getInfo())) {
             return true;
         }
         return existeDatoRecursivo(nodo.getNodoNo(), dato) || existeDatoRecursivo(nodo.getNodoSi(), dato);
@@ -160,9 +160,7 @@ public class Arbol {
             obtenerDatosYMapearRec(nodo.getNodoNo(), datos, agregarInicio, caracteristicas, map);
             obtenerDatosYMapearRec(nodo.getNodoSi(), datos, agregarInicio, contenedorSi, map);
         } else if (nodo.getDato() instanceof Animal) {//Los animales son hojas asi que parara en el siguiente la recursión
-            // Guardar características del animal
-            Animal animal = (Animal) nodo.getDato();
-            map.put(animal.getInfo().toLowerCase(), new Contenedor<>(caracteristicas));
+            map.put(nodo.getDato().getInfo().toLowerCase(), new Contenedor<>(caracteristicas));
 
         }
 
