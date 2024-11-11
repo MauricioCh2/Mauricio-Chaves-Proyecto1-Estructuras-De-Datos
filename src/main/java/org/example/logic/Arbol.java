@@ -17,10 +17,10 @@ public class Arbol {
 
 
     //Inserciones ------------------------------------------------------------------------------------------------------
-    //Nota esto solo se usa para cargar de manera quemada los datos
+    //Nota estos dos metodos solo se usa para cargar de manera quemada los datos
     public void insertar(Informacion dato) { // Inserta el primer nodo
         if (raiz == null) {
-            print.printlnColor(print.PURPLE, "<<<<Instanciando la primera vez>>>>");
+            print.printlnColor(print.PURPLE, "Instanciando la primera vez, Raiz: "+dato.getInfo());
             raiz = new Nodo<>(dato, 0); // Nivel 0 para el primer nodo
         }
     }
@@ -42,6 +42,7 @@ public class Arbol {
 
 
     //Utiles------------------------------------------------------------------------------------------------------------
+    //Aqui se agregan los nuevos animales y sus caracteristicas
     public void actualizarConNuevaCaracteristica(Nodo<Informacion> nodo, String nuevoAnimal, String nuevaCaracteristica) {
         // Convertir el dato actual en Animal para guardarlo como "No"
         Animal animalAnterior = (Animal) nodo.getDato();
@@ -60,6 +61,8 @@ public class Arbol {
     }
 
 
+    //Búsquedas---------------------------------------------------------------------------------------------------------
+    //Este es otro método que solo uso para la inserción de datos quemados, ignorar si es necesario
     public Optional<Nodo<Informacion>> buscarNodo(Nodo<Informacion> actual, Informacion info) {
         if (actual == null) return Optional.empty();
         if (actual.getDato().equals(info)) return Optional.of(actual);

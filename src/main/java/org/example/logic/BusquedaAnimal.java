@@ -90,6 +90,9 @@ public class BusquedaAnimal {
             case 3:
                 if(ingresoDatos.validBoolean("¿Estas seguro que deseas sobreescribir la lista, perderás el árbol actual? (s/n): ")) {
                     cargaQuemado();
+                    printArboRunnable.run();
+                    print.printlnColor(print.GREEN, "Datos quemados cargados con exito!");
+
                 }
                 break;
             case 4:
@@ -292,6 +295,9 @@ public class BusquedaAnimal {
 
 
     //Carga de lista con datos quemados por si acaso--------------------------------------------------------------------
+    /*
+       *Soy conciente que hay formas más eficientes de hacer esto, pero como solo es para pruebas y facilitar la revision por cuestiones de tiempo lo voy a dejar asi
+     */
     private void cargaQuemado(){
         arbol = new Arbol();//Se reinicia el árbol
         print.printlnColor(print.GREEN,"Cargando datos del árbol!");
@@ -304,7 +310,7 @@ public class BusquedaAnimal {
         Caracteristica invertebrado = new Caracteristica("invertebrado");
         Caracteristica anfibio = new Caracteristica("anfibio");
 
-        Animal aguila = new Animal("Águila");
+        Animal aguila = new Animal("Aguila");
         Animal lagarto = new Animal("Lagarto");
         Animal ballena = new Animal("Ballena");
         Animal gato = new Animal("Gato");
@@ -316,7 +322,7 @@ public class BusquedaAnimal {
 
         // Construcción manual del árbol siguiendo la estructura de la imagen
         arbol.insertar(ave);//Raíz
-        // Nivel 2
+        // Nivel 1
         arbol.insertarHijo(ave, aguila, true);      // ave -> Sí -> aguila
         arbol.insertarHijo(ave, reptil, false);     // ave -> No -> reptil
 

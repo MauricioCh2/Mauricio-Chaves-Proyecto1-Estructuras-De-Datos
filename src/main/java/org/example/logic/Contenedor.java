@@ -126,7 +126,7 @@ public class Contenedor<T extends Comparable<? super T>>{
         String animalL = animal.toLowerCase();
 
         if (!map.containsKey(animalL)) {
-            print.println("No existe");
+            print.printlnColor(print.RED,"No existe");
             return;
         }
 

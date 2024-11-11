@@ -32,8 +32,9 @@ public class ingresoDatos {
             print.print(mensaje);
             input = scanner.nextLine().trim();
             valid = input.matches("^[a-zA-ZñÑ\\s]*$");
-            if (!valid|| input.isEmpty()) {
+            if (!valid|| input.isEmpty()|| input.length()>=180) {
                 print.printlnColor(print.RED, "DATOS INCORRECTOS: No se permiten caracteres especiales o números");
+                valid  = false;
             }
         } while (!valid);
         return input;
